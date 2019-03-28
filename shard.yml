@@ -1,0 +1,13 @@
+name: cray-test
+version: 0.1.0
+
+authors:
+  - Matt Swieboda <matts@topsteptrader.com>
+
+targets:
+  cray-test:
+    main: src/cray-test.cr
+
+crystal: 0.27.2
+
+license: MIT

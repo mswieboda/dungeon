@@ -1,0 +1,6 @@
+version: 1.0
+shards:
+  cray:
+    gitlab: zatherz/cray
+    commit: 56c4d0b3fac626625604a4a96f16e25546fb1506
+

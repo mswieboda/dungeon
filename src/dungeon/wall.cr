@@ -31,6 +31,10 @@ class Wall
 
   def draw
     LibRay.draw_rectangle(loc.x, loc.y, width, height, LibRay::RED)
+
+    # collision box
+    rect = collision_rect
+    LibRay.draw_rectangle_lines(rect.x, rect.y, rect.width, rect.height, LibRay::WHITE)
   end
 
   def collision_rect

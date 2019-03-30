@@ -9,7 +9,7 @@ class Level
 
   def initialize(@level_width, @level_height)
     @player_location = Location.new(10, 50)
-    @player = Player.new(x: level_width / 2_f32, y: level_height / 2_f32, height: 50, width: 30, rotation: 0)
+    @player = Player.new(loc: @player_location, size: 50)
 
     @walls = [] of Wall
     walls << Wall.new(Location.new(500, 100), 10, 100, 1)

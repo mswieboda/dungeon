@@ -1,7 +1,7 @@
 class Location
-  property x : Int32
-  property y : Int32
+  property x : Float32
+  property y : Float32
 
-  def initialize(@x : Int32, @y : Int32)
+  def initialize(@x : Float32, @y : Float32)
   end
 end

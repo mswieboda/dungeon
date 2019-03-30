@@ -1,32 +1,27 @@
 class Player
   property loc : Location
-  property size : Int32
+  property width : Int32
+  property height : Int32
+  property texture : LibRay::Texture2D
 
   PLAYER_MOVEMENT = 300
 
-  def initialize(@loc : Location, @size : Int32)
+  def initialize(@loc : Location, @width : Int32, @height : Int32)
+    image = LibRay.load_image(File.join(__DIR__, "assets/player.png"))
+    @texture = LibRay.load_texture_from_image(image)
   end
 
   def collision_rect
     rect = LibRay::Rectangle.new
-    rect.x = loc.x - size / 2
-    rect.y = loc.y - size / 2
-    rect.width = size
-    rect.height = size
+    rect.x = loc.x - width / 2
+    rect.y = loc.y - height / 2
+    rect.width = width
+    rect.height = height
     rect
   end
 
   def draw
-    v1 = LibRay::Vector2.new(x: loc.x, y: loc.y - size / 2)
-    v2 = LibRay::Vector2.new(x: loc.x - size / 2, y: loc.y + size / 2)
-    v3 = LibRay::Vector2.new(x: loc.x + size / 2, y: loc.y + size / 2)
-
-    LibRay.draw_triangle(
-      v1,
-      v2,
-      v3,
-      LibRay::RED
-    )
+    LibRay.draw_texture(texture, loc.x - width / 2, loc.y - height / 2, LibRay::WHITE)
 
     # collision box
     rect = collision_rect

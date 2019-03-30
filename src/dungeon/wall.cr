@@ -29,12 +29,13 @@ class Wall
     end
   end
 
-  def draw
+  def draw(draw_collision_box = false)
     LibRay.draw_rectangle(loc.x, loc.y, width, height, LibRay::RED)
 
-    # collision box
-    rect = collision_rect
-    LibRay.draw_rectangle_lines(rect.x, rect.y, rect.width, rect.height, LibRay::WHITE)
+    if draw_collision_box
+      rect = collision_rect
+      LibRay.draw_rectangle_lines(rect.x, rect.y, rect.width, rect.height, LibRay::WHITE)
+    end
   end
 
   def collision_rect

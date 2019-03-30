@@ -7,8 +7,10 @@ class Level
   property player : Player
   property walls
 
+  DRAW_COLLISION_BOXES = false
+
   def initialize(@level_width, @level_height)
-    @player_location = Location.new(10, 50)
+    @player_location = Location.new(150, 150)
     @player = Player.new(loc: @player_location, width: 48, height: 64)
 
     @walls = [] of Wall
@@ -18,10 +20,10 @@ class Level
 
   def draw
     walls.each do |wall|
-      wall.draw
+      wall.draw(DRAW_COLLISION_BOXES)
     end
 
-    @player.draw
+    @player.draw(DRAW_COLLISION_BOXES)
   end
 
   def movement

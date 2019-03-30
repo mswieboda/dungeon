@@ -10,6 +10,15 @@ class Player
   def initialize(@x : Float32, @y : Float32, @width : Float32, @height : Float32, @rotation : Float32)
   end
 
+  def collision_rect
+    rect = LibRay::Rectangle.new
+    rect.x = x
+    rect.y = y
+    rect.width = width
+    rect.height = height
+    rect
+  end
+
   def draw
     # v1 = LibRay::Vector2.new(x: x, y: y - height / 2)
     # v2 = LibRay::Vector2.new(x: x - width / 2, y: y + height / 2)
@@ -56,8 +65,9 @@ class Player
     y + ((x - rx) * Math.sin(to_rad(rotation)) + (y - ry) * Math.cos(to_rad(rotation)))
   end
 
-  def movement
-    delta = LibRay.get_frame_time
+  def movement(collision_rects)
+    delta_t = LibRay.get_frame_time
+    delta = delta_t * PLAYER_MOVEMENT
 
     # rotation of shape/sprite
     if LibRay.key_pressed?(LibRay::KEY_W)
@@ -78,19 +88,31 @@ class Player
 
     # movement
     if LibRay.key_down?(LibRay::KEY_W)
-      @y -= delta * PLAYER_MOVEMENT
+      @y -= delta unless collisions?(x: x, y: y - delta, collision_rects: collision_rects)
     end
 
     if LibRay.key_down?(LibRay::KEY_A)
-      @x -= delta * PLAYER_MOVEMENT
+      @x -= delta unless collisions?(x: x - delta, y: y, collision_rects: collision_rects)
     end
 
     if LibRay.key_down?(LibRay::KEY_S)
-      @y += delta * PLAYER_MOVEMENT
+      @y += delta unless collisions?(x: x, y: y + delta, collision_rects: collision_rects)
     end
 
     if LibRay.key_down?(LibRay::KEY_D)
-      @x += delta * PLAYER_MOVEMENT
+      @x += delta unless collisions?(x: x + delta, y: y, collision_rects: collision_rects)
     end
+  end
+
+  def collisions?(x : Float32, y : Float32, collision_rects : Array(LibRay::Rectangle))
+    rect1 = collision_rect
+    rect1.x = x
+    rect1.y = y
+
+    collision_rects.any? { |collision_rect| collision?(rect1, collision_rect) }
+  end
+
+  def collision?(rect1, rect2)
+    rect1.x < rect2.x + rect2.width && rect1.x + rect1.width > rect2.x && rect1.y < rect2.y + rect2.height && rect1.y + rect1.height > rect2.y
   end
 end

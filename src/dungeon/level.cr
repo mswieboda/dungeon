@@ -12,8 +12,8 @@ class Level
     @player = Player.new(x: level_width / 2_f32, y: level_height / 2_f32, height: 50, width: 30, rotation: 0)
 
     @walls = [] of Wall
-    walls << Wall.new(Location.new(100, 100), 10, 100, 1)
-    walls << Wall.new(Location.new(200, 300), 10, 100, 2)
+    walls << Wall.new(Location.new(500, 100), 10, 100, 1)
+    walls << Wall.new(Location.new(300, 300), 10, 100, 2)
   end
 
   def draw
@@ -25,6 +25,6 @@ class Level
   end
 
   def movement
-    @player.movement
+    @player.movement(walls.map { |w| w.collision_rect })
   end
 end

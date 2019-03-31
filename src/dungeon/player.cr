@@ -1,33 +1,24 @@
-class Player
-  property loc : Location
-  property width : Int32
-  property height : Int32
-  property direction_textures : Array(LibRay::Texture2D)
-  property direction : Direction
+require "./entity"
 
-  PLAYER_MOVEMENT = 300
+class Player < Entity
+  include DirectionTextures
 
-  def initialize(@loc : Location, @width : Int32, @height : Int32)
+  PLAYER_MOVEMENT = 200
+
+  def initialize(@loc : Location, @width : Float32, @height : Float32)
+    super(@loc, @width, @height)
+
     @direction = Direction::Up
     @direction_textures = [] of LibRay::Texture2D
-
-    Direction.each do |dir|
-      image = LibRay.load_image(File.join(__DIR__, "assets/player-#{dir.to_s.downcase}.png"))
-      @direction_textures << LibRay.load_texture_from_image(image)
-    end
+    load_textures
   end
 
-  def collision_rect
-    rect = LibRay::Rectangle.new
-    rect.x = loc.x
-    rect.y = loc.y
-    rect.width = width
-    rect.height = height
-    rect
+  def texture_file_name
+    "player"
   end
 
   def draw(draw_collision_box = false)
-    LibRay.draw_texture(direction_textures[direction.value], loc.x, loc.y, LibRay::WHITE)
+    LibRay.draw_texture_v(direction_textures[direction.value], LibRay::Vector2.new(x: loc.x, y: loc.y), LibRay::WHITE)
 
     if draw_collision_box
       rect = collision_rect
@@ -63,13 +54,5 @@ class Player
       @loc.x += delta
       @loc.x -= delta if collisions?(collision_rects)
     end
-  end
-
-  def collisions?(collision_rects : Array(LibRay::Rectangle))
-    collision_rects.any? { |other_collision_rect| collision?(collision_rect, other_collision_rect) }
-  end
-
-  def collision?(rect1, rect2)
-    rect1.x < rect2.x + rect2.width && rect1.x + rect1.width > rect2.x && rect1.y < rect2.y + rect2.height && rect1.y + rect1.height > rect2.y
   end
 end

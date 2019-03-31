@@ -32,20 +32,22 @@ module Dungeon
 
     def draw
       if attacking?
-        attack_x = x - width
-        attack_y = y - height / 2
+        attack_x = x # - width
+        attack_y = y # - height / 2
         attack_rotation = 0
 
         if direction.up?
-          attack_y -= height / 4
+          attack_y += height / 1.5
         elsif direction.down?
-          attack_y += height / 4
+          attack_y -= height / 1.5
           attack_rotation = 180
         elsif direction.left?
-          attack_x -= width / 4
+          attack_x += width
+          attack_y += height / 4
           attack_rotation = -90
         elsif direction.right?
-          attack_x += width / 4
+          attack_x -= width
+          attack_y -= height / 4
           attack_rotation = 90
         end
 
@@ -64,8 +66,8 @@ module Dungeon
             height: @attack_sprite.height / ATTACK_FRAMES
           ),
           origin: LibRay::Vector2.new(
-            x: 0,
-            y: 0
+            x: @attack_sprite.width / 2,
+            y: @attack_sprite.height / 2
           ),
           rotation: attack_rotation,
           tint: LibRay::WHITE
@@ -134,7 +136,7 @@ module Dungeon
         @loc.x -= delta if collisions?(collision_rects)
       end
 
-      attack if LibRay.key_pressed?(LibRay::KEY_SPACE)
+      attack if !attacking? && LibRay.key_pressed?(LibRay::KEY_SPACE)
     end
   end
 end

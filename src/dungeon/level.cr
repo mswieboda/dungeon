@@ -7,15 +7,17 @@ class Level
   property player : Player
   property walls
 
-  DRAW_COLLISION_BOXES = false
+  DRAW_COLLISION_BOXES = true
 
   def initialize(@level_width, @level_height)
     @player_location = Location.new(150, 150)
     @player = Player.new(loc: @player_location, width: 48, height: 64)
 
     @walls = [] of Wall
-    walls << Wall.new(Location.new(500, 100), 10, 100, 1)
-    walls << Wall.new(Location.new(300, 300), 10, 100, 2)
+    walls << Wall.new(loc: Location.new(0, 0), width: level_width, height: 25)
+    walls << Wall.new(loc: Location.new(level_width - 25, 0), width: 25, height: level_height)
+    walls << Wall.new(loc: Location.new(0, level_height - 25), width: level_width, height: 25)
+    walls << Wall.new(loc: Location.new(0, 0), width: 25, height: level_height)
   end
 
   def draw

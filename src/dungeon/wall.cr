@@ -1,36 +1,30 @@
 class Wall
   property loc : Location
-  property size : Int32
-  property thickness : Int32
-  property direction : Int32 # TODO: switch to enum or class
-  property width : Int32
-  property height : Int32
+  property width : Float32
+  property height : Float32
 
-  def initialize(@loc : Location, @size : Int32, @thickness : Int32, @direction : Int32)
-    @width = @height = 0
-    set_direction
+  def initialize(@loc : Location, @width : Float32, @height : Float32)
   end
 
-  def set_direction
-    if direction == 1 # left to right
-      @width = size
-      @height = thickness
-    elsif direction == 2 # up to down
-      @width = thickness
-      @height = size
-    elsif direction == 3 # right to left
-      @width = -size
-      @height = -thickness
-    elsif direction == 2 # down to up
-      @width = -thickness
-      @height = -size
-    else
-      @width = height = 0
-    end
+  def initialize(@loc : Location, width : Int32, height : Int32)
+    @width = width.to_f32
+    @height = height.to_f32
+  end
+
+  def initialize(@loc : Location, @width : Int32, height : Float32)
+    @height = height.to_f32
+  end
+
+  def initialize(@loc : Location, width : Float32, @height : Int32)
+    @width = width.to_f32
   end
 
   def draw(draw_collision_box = false)
-    LibRay.draw_rectangle(loc.x, loc.y, width, height, LibRay::RED)
+    LibRay.draw_rectangle_v(
+      LibRay::Vector2.new(x: loc.x, y: loc.y),
+      LibRay::Vector2.new(x: width, y: height),
+      LibRay::RED
+    )
 
     if draw_collision_box
       rect = collision_rect

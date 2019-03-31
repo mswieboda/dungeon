@@ -13,15 +13,15 @@ class Player
 
   def collision_rect
     rect = LibRay::Rectangle.new
-    rect.x = loc.x - width / 2
-    rect.y = loc.y - height / 2
+    rect.x = loc.x
+    rect.y = loc.y
     rect.width = width
     rect.height = height
     rect
   end
 
   def draw(draw_collision_box = false)
-    LibRay.draw_texture(texture, loc.x - width / 2, loc.y - height / 2, LibRay::WHITE)
+    LibRay.draw_texture(texture, loc.x, loc.y, LibRay::WHITE)
 
     if draw_collision_box
       rect = collision_rect

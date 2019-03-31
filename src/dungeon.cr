@@ -16,10 +16,9 @@ module Dungeon
   def self.draw
     LibRay.begin_drawing
     LibRay.clear_background LibRay::BLACK
+    @@level.draw
 
     LibRay.draw_fps(0, 0)
-
-    @@level.draw
 
     LibRay.end_drawing
   end

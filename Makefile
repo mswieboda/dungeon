@@ -1,7 +1,7 @@
 default: run
 
 build:
-	crystal build src/dungeon.cr
+	crystal build src/dungeon.cr -o build/dungeon
 
 run: build
-	./dungeon
+	./build/dungeon

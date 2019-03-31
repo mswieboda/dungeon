@@ -7,7 +7,7 @@ class Level
   property player : Player
   property walls
 
-  DRAW_COLLISION_BOXES = true
+  DRAW_COLLISION_BOXES = false
 
   def initialize(@level_width, @level_height)
     @player_location = Location.new(150, 150)

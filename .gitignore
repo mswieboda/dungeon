@@ -5,4 +5,5 @@
 *.dwarf
 
 .DS_Store
-./dungeon
+
+/build

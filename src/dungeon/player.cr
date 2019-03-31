@@ -2,13 +2,19 @@ class Player
   property loc : Location
   property width : Int32
   property height : Int32
-  property texture : LibRay::Texture2D
+  property direction_textures : Array(LibRay::Texture2D)
+  property direction : Direction
 
   PLAYER_MOVEMENT = 300
 
   def initialize(@loc : Location, @width : Int32, @height : Int32)
-    image = LibRay.load_image(File.join(__DIR__, "assets/player.png"))
-    @texture = LibRay.load_texture_from_image(image)
+    @direction = Direction::Up
+    @direction_textures = [] of LibRay::Texture2D
+
+    Direction.each do |dir|
+      image = LibRay.load_image(File.join(__DIR__, "assets/player-#{dir.to_s.downcase}.png"))
+      @direction_textures << LibRay.load_texture_from_image(image)
+    end
   end
 
   def collision_rect
@@ -21,7 +27,7 @@ class Player
   end
 
   def draw(draw_collision_box = false)
-    LibRay.draw_texture(texture, loc.x, loc.y, LibRay::WHITE)
+    LibRay.draw_texture(direction_textures[direction.value], loc.x, loc.y, LibRay::WHITE)
 
     if draw_collision_box
       rect = collision_rect
@@ -35,21 +41,25 @@ class Player
 
     # movement
     if LibRay.key_down?(LibRay::KEY_W)
+      @direction = Direction::Up
       @loc.y -= delta
       @loc.y += delta if collisions?(collision_rects)
     end
 
     if LibRay.key_down?(LibRay::KEY_A)
+      @direction = Direction::Left
       @loc.x -= delta
       @loc.x += delta if collisions?(collision_rects)
     end
 
     if LibRay.key_down?(LibRay::KEY_S)
+      @direction = Direction::Down
       @loc.y += delta
       @loc.y -= delta if collisions?(collision_rects)
     end
 
     if LibRay.key_down?(LibRay::KEY_D)
+      @direction = Direction::Right
       @loc.x += delta
       @loc.x -= delta if collisions?(collision_rects)
     end

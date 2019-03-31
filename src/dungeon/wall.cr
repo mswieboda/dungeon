@@ -1,14 +1,13 @@
-class Wall < Entity
-  def draw(draw_collision_box = false)
-    LibRay.draw_rectangle_v(
-      LibRay::Vector2.new(x: loc.x, y: loc.y),
-      LibRay::Vector2.new(x: width, y: height),
-      LibRay::RED
-    )
+module Dungeon
+  class Wall < Entity
+    def draw
+      LibRay.draw_rectangle_v(
+        LibRay::Vector2.new(x: loc.x - width / 2, y: loc.y - height / 2),
+        LibRay::Vector2.new(x: width, y: height),
+        LibRay::RED
+      )
 
-    if draw_collision_box
-      rect = collision_rect
-      LibRay.draw_rectangle_lines(rect.x, rect.y, rect.width, rect.height, LibRay::WHITE)
+      draw_collision_box if draw_collision_box?
     end
   end
 end

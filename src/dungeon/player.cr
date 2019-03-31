@@ -4,12 +4,27 @@ module Dungeon
   class Player < Entity
     include DirectionTextures
 
+    property tint : LibRay::Color
     property attacking : Bool
     property attack_time : Int32
+    property enemy_bump_flash_time : Int32
+    property invincible_time : Int32
+
+    FADED = LibRay::Color.new(r: 255, g: 255, b: 255, a: 100)
 
     PLAYER_MOVEMENT = 200
-    ATTACK_TIME     =  30
-    ATTACK_FRAMES   =   5
+    TINT_DEFAULT    = LibRay::WHITE
+
+    ATTACK_TIME   = 15
+    ATTACK_FRAMES =  5
+
+    ENEMY_BUMP_FLASH_TIME     = 15
+    ENEMY_BUMP_FLASH_INTERVAL =  5
+    ENEMY_BUMP_FLASH_TINT     = LibRay::RED
+
+    INVINCIBLE_TIME           = 45
+    INVINCIBLE_FLASH_INTERVAL = 15
+    INVINCIBLE_TINT           = FADED
 
     def initialize(@loc : Location, @width : Float32, @height : Float32, @collision_box : Box)
       super
@@ -18,9 +33,14 @@ module Dungeon
       @direction_textures = [] of LibRay::Texture2D
       load_textures
 
+      @tint = TINT_DEFAULT
+
       @attacking = false
       @attack_time = 0
       @attack_sprites = [] of LibRay::Texture2D
+
+      @enemy_bump_flash_time = 0
+      @invincible_time = 0
 
       image = LibRay.load_image(File.join(__DIR__, "assets/player-attack.png"))
       @attack_sprite = LibRay.load_texture_from_image(image)
@@ -70,7 +90,7 @@ module Dungeon
             y: @attack_sprite.height / 2
           ),
           rotation: attack_rotation,
-          tint: LibRay::WHITE
+          tint: tint
         )
       end
 
@@ -80,7 +100,7 @@ module Dungeon
           x: x - width / 2,
           y: y - height / 2
         ),
-        tint: LibRay::WHITE
+        tint: tint
       )
 
       draw_collision_box if draw_collision_box?
@@ -99,9 +119,24 @@ module Dungeon
       (@attack_time / (ATTACK_TIME / ATTACK_FRAMES)).to_i
     end
 
-    def movement(collision_rects)
+    def enemy_bump(enemies)
+      enemies.each do |enemy|
+        if !invincible? && collision?(enemy)
+          # health -= enemy.bump_damage
+          @enemy_bump_flash_time = 1
+        end
+      end
+    end
+
+    def invincible?
+      enemy_bump_flash_time > 0 || invincible_time > 0
+    end
+
+    def movement(entities)
       delta_t = LibRay.get_frame_time
       delta = delta_t * PLAYER_MOVEMENT
+
+      enemies = entities.select { |e| e.is_a?(Enemy) }
 
       if attacking?
         @attack_time += 1
@@ -111,29 +146,58 @@ module Dungeon
         end
       end
 
+      if enemy_bump_flash_time >= ENEMY_BUMP_FLASH_TIME
+        @enemy_bump_flash_time = 0
+        @tint = TINT_DEFAULT
+        @invincible_time = 1
+      elsif enemy_bump_flash_time > 0
+        @tint = (enemy_bump_flash_time / ENEMY_BUMP_FLASH_INTERVAL).to_i % 2 == 1 ? TINT_DEFAULT : ENEMY_BUMP_FLASH_TINT
+        @enemy_bump_flash_time += 1
+      end
+
+      if invincible_time >= INVINCIBLE_TIME
+        @invincible_time = 0
+        @tint = TINT_DEFAULT
+      elsif invincible_time > 0
+        @tint = (invincible_time / INVINCIBLE_FLASH_INTERVAL).to_i % 2 == 1 ? TINT_DEFAULT : INVINCIBLE_TINT
+        @invincible_time += 1
+      end
+
       # movement
       if LibRay.key_down?(LibRay::KEY_W)
         @direction = Direction::Up
         @loc.y -= delta
-        @loc.y += delta if collisions?(collision_rects)
+
+        enemy_bump(enemies)
+
+        @loc.y += delta if collisions?(entities)
       end
 
       if LibRay.key_down?(LibRay::KEY_A)
         @direction = Direction::Left
         @loc.x -= delta
-        @loc.x += delta if collisions?(collision_rects)
+
+        enemy_bump(enemies)
+
+        @loc.x += delta if collisions?(entities)
       end
 
       if LibRay.key_down?(LibRay::KEY_S)
         @direction = Direction::Down
         @loc.y += delta
-        @loc.y -= delta if collisions?(collision_rects)
+
+        enemy_bump(enemies)
+
+        @loc.y -= delta if collisions?(entities)
       end
 
       if LibRay.key_down?(LibRay::KEY_D)
         @direction = Direction::Right
         @loc.x += delta
-        @loc.x -= delta if collisions?(collision_rects)
+
+        enemy_bump(enemies)
+
+        @loc.x -= delta if collisions?(entities)
       end
 
       attack if !attacking? && LibRay.key_pressed?(LibRay::KEY_SPACE)

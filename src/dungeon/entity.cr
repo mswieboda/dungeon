@@ -5,7 +5,7 @@ module Dungeon
     property height : Float32
     property collision_box : Box
 
-    DRAW_COLLISION_BOXES = true
+    DRAW_COLLISION_BOXES = false
 
     def initialize(@loc : Location, @width : Float32, @height : Float32, @collision_box : Box)
     end

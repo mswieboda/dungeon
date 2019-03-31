@@ -6,6 +6,7 @@ module Dungeon
   SCREEN_HEIGHT =  768
 
   LibRay.init_window(SCREEN_WIDTH, SCREEN_HEIGHT, "Dungeon")
+  LibRay.set_target_fps(60)
 
   @@level = Level.new(SCREEN_WIDTH, SCREEN_HEIGHT)
 
@@ -16,6 +17,7 @@ module Dungeon
   def self.draw
     LibRay.begin_drawing
     LibRay.clear_background LibRay::BLACK
+
     @@level.draw
 
     LibRay.draw_fps(0, 0)

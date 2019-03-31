@@ -54,6 +54,9 @@ module Dungeon
     end
 
     def movement
+      # change order of drawing based on y coordinates
+      @drawables.sort_by! { |drawable| drawable.y }
+
       @player.movement(@collidables.map { |c| c })
     end
   end

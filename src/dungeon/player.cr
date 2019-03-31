@@ -21,10 +21,8 @@ module Dungeon
       @attack_frame = 0
       @attack_sprites = [] of LibRay::Texture2D
 
-      ATTACK_FRAMES.times do |index|
-        image = LibRay.load_image(File.join(__DIR__, "assets/player-attack-#{index}.png"))
-        @attack_sprites << LibRay.load_texture_from_image(image)
-      end
+      image = LibRay.load_image(File.join(__DIR__, "assets/player-attack.png"))
+      @attack_sprite = LibRay.load_texture_from_image(image)
     end
 
     def texture_file_name
@@ -32,6 +30,48 @@ module Dungeon
     end
 
     def draw
+      if attacking?
+        attack_x = x - width / 2
+        attack_y = y - height / 2
+
+        if direction.up?
+          attack_y -= height / 4
+        elsif direction.down?
+          attack_y += height / 4
+        elsif direction.left?
+          attack_x -= width / 4
+        elsif direction.right?
+          attack_x += width / 4
+        end
+
+        rect = LibRay::Rectangle.new
+        rect.x = 0
+        rect.y = @attack_frame * @attack_sprite.height / ATTACK_FRAMES
+        rect.width = @attack_sprite.width
+        rect.height = @attack_sprite.height / ATTACK_FRAMES
+
+        puts rect
+
+        LibRay.draw_texture_rec(
+          texture: @attack_sprite,
+          source_rec: rect,
+          position: LibRay::Vector2.new(
+            x: attack_x,
+            y: attack_y
+          ),
+          tint: LibRay::WHITE
+        )
+
+        # LibRay.draw_texture_v(
+        #   texture: @attack_sprites[attack_frame],
+        #   position: LibRay::Vector2.new(
+        #     x: attack_x,
+        #     y: attack_y
+        #   ),
+        #   tint: LibRay::WHITE
+        # )
+      end
+
       LibRay.draw_texture_v(
         texture: direction_textures[direction.value],
         position: LibRay::Vector2.new(
@@ -41,36 +81,6 @@ module Dungeon
         tint: LibRay::WHITE
       )
 
-      if attacking?
-        # puts "attacking draw"
-        # rect = LibRay::Rectangle.new
-        # rect.x = 0_f32
-        # rect.y = 0_f32
-        # rect.width = @attack_sprite.width.to_f32
-        # rect.height = @attack_sprite.height / 2_f32
-
-        # puts rect
-
-        # LibRay.draw_texture_rec(
-        #   texture: @attack_sprite,
-        #   source_rec: rect,
-        #   position: LibRay::Vector2.new(
-        #     x: x,
-        #     y: y - 64
-        #   ),
-        #   tint: LibRay::WHITE
-        # )
-
-        LibRay.draw_texture_v(
-          texture: @attack_sprites[attack_frame],
-          position: LibRay::Vector2.new(
-            x: x,
-            y: y - 64
-          ),
-          tint: LibRay::WHITE
-        )
-      end
-
       draw_collision_box if draw_collision_box?
     end
 
@@ -79,7 +89,6 @@ module Dungeon
     end
 
     def attack
-      puts "attack"
       @attack_frame = 0
       @attacking = true
     end
@@ -89,7 +98,6 @@ module Dungeon
       delta = delta_t * PLAYER_MOVEMENT
 
       if attacking?
-        puts "attacking timer"
         @attack_frame += 1
 
         if attack_frame >= ATTACK_FRAMES
@@ -122,10 +130,7 @@ module Dungeon
         @loc.x -= delta if collisions?(collision_rects)
       end
 
-      if LibRay.key_pressed?(LibRay::KEY_SPACE)
-        puts "space"
-        attack
-      end
+      attack if LibRay.key_pressed?(LibRay::KEY_SPACE)
     end
   end
 end

@@ -16,7 +16,7 @@ module Dungeon
       @attack_time = 0
       @attack_sprites = [] of LibRay::Texture2D
       @attack_x = @attack_y = @attack_rotation = 0_f32
-      image = LibRay.load_image(File.join(__DIR__, "assets/player-attack.png"))
+      image = LibRay.load_image(File.join(__DIR__, "assets/sword-attack.png"))
       @attack_sprite = LibRay.load_texture_from_image(image)
 
       collision_box = Box.new(Location.new(0, 0), width: @attack_sprite.width, height: @attack_sprite.width / ATTACK_FRAMES)
@@ -76,6 +76,14 @@ module Dungeon
         @attacking = false
       end
 
+      adjust_location_and_dimensions
+
+      # TODO: cast to Enemy
+      # map(&.as(ChildClass)
+      attack_enemies(entities.select { |e| e.is_a?(Enemy) }.map(&.as(Enemy)))
+    end
+
+    def adjust_location_and_dimensions
       @attack_x = @attack_y = @attack_rotation = 0
 
       if direction.up?
@@ -90,8 +98,6 @@ module Dungeon
         @attack_x = x_offset
         @attack_rotation = 90
       end
-
-      # TODO: check for collisions with weapon with enemies
 
       # change collision box based on direction
       box_x = 0
@@ -117,6 +123,14 @@ module Dungeon
         box.y = box_y.to_f32
         box.width = box_width.to_f32
         box.height = box_height.to_f32
+      end
+    end
+
+    def attack_enemies(enemies : Array(Enemy))
+      enemies.each do |enemy|
+        if collision?(enemy)
+          enemy.hit
+        end
       end
     end
   end

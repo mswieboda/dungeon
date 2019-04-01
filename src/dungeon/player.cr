@@ -5,8 +5,6 @@ module Dungeon
     include DirectionTextures
 
     property tint : LibRay::Color
-    property enemy_bump_flash_time : Int32
-    property invincible_time : Int32
     property weapon : Weapon
 
     FADED = LibRay::Color.new(r: 255, g: 255, b: 255, a: 100)
@@ -66,7 +64,7 @@ module Dungeon
     end
 
     def invincible?
-      enemy_bump_flash_time > 0 || invincible_time > 0
+      @enemy_bump_flash_time > 0 || @invincible_time > 0
     end
 
     def movement(entities)
@@ -75,20 +73,20 @@ module Dungeon
 
       enemies = entities.select { |e| e.is_a?(Enemy) }
 
-      if enemy_bump_flash_time >= ENEMY_BUMP_FLASH_TIME
+      if @enemy_bump_flash_time >= ENEMY_BUMP_FLASH_TIME
         @enemy_bump_flash_time = 0
         @tint = TINT_DEFAULT
         @invincible_time = 1
-      elsif enemy_bump_flash_time > 0
-        @tint = (enemy_bump_flash_time / ENEMY_BUMP_FLASH_INTERVAL).to_i % 2 == 1 ? TINT_DEFAULT : ENEMY_BUMP_FLASH_TINT
+      elsif @enemy_bump_flash_time > 0
+        @tint = (@enemy_bump_flash_time / ENEMY_BUMP_FLASH_INTERVAL).to_i % 2 == 1 ? TINT_DEFAULT : ENEMY_BUMP_FLASH_TINT
         @enemy_bump_flash_time += 1
       end
 
-      if invincible_time >= INVINCIBLE_TIME
+      if @invincible_time >= INVINCIBLE_TIME
         @invincible_time = 0
         @tint = TINT_DEFAULT
-      elsif invincible_time > 0
-        @tint = (invincible_time / INVINCIBLE_FLASH_INTERVAL).to_i % 2 == 1 ? TINT_DEFAULT : INVINCIBLE_TINT
+      elsif @invincible_time > 0
+        @tint = (@invincible_time / INVINCIBLE_FLASH_INTERVAL).to_i % 2 == 1 ? TINT_DEFAULT : INVINCIBLE_TINT
         @invincible_time += 1
       end
 

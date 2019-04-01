@@ -9,5 +9,8 @@ module Dungeon
 
       draw_collision_box if draw_collision_box?
     end
+
+    def movement(_entities)
+    end
   end
 end

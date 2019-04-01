@@ -7,6 +7,9 @@ module Dungeon
     property tint : LibRay::Color
     property attacking : Bool
     property attack_time : Int32
+    property attack_x : Float32
+    property attack_y : Float32
+    property attack_rotation : Float32
     property enemy_bump_flash_time : Int32
     property invincible_time : Int32
 
@@ -38,6 +41,7 @@ module Dungeon
       @attacking = false
       @attack_time = 0
       @attack_sprites = [] of LibRay::Texture2D
+      @attack_x = @attack_y = @attack_rotation = 0
 
       @enemy_bump_flash_time = 0
       @invincible_time = 0
@@ -52,24 +56,7 @@ module Dungeon
 
     def draw
       if attacking?
-        attack_x = x # - width
-        attack_y = y # - height / 2
-        attack_rotation = 0
-
-        if direction.up?
-          attack_y += height / 1.5
-        elsif direction.down?
-          attack_y -= height / 1.5
-          attack_rotation = 180
-        elsif direction.left?
-          attack_x += width
-          attack_y += height / 4
-          attack_rotation = -90
-        elsif direction.right?
-          attack_x -= width
-          attack_y -= height / 4
-          attack_rotation = 90
-        end
+        puts "draw: #{y + attack_y}"
 
         LibRay.draw_texture_pro(
           texture: @attack_sprite,
@@ -80,14 +67,14 @@ module Dungeon
             height: @attack_sprite.height / ATTACK_FRAMES
           ),
           dest_rec: LibRay::Rectangle.new(
-            x: attack_x,
-            y: attack_y,
+            x: x + attack_x,
+            y: y + attack_y,
             width: @attack_sprite.width,
             height: @attack_sprite.height / ATTACK_FRAMES
           ),
           origin: LibRay::Vector2.new(
             x: @attack_sprite.width / 2,
-            y: @attack_sprite.height / 2
+            y: @attack_sprite.height / ATTACK_FRAMES / 2
           ),
           rotation: attack_rotation,
           tint: tint
@@ -103,7 +90,10 @@ module Dungeon
         tint: tint
       )
 
-      draw_collision_box if draw_collision_box?
+      if draw_collision_box?
+        draw_collision_box
+        draw_collision_box(attack_collision_box) if attacking?
+      end
     end
 
     def attacking?
@@ -117,6 +107,31 @@ module Dungeon
 
     def attack_frame
       (@attack_time / (ATTACK_TIME / ATTACK_FRAMES)).to_i
+    end
+
+    def attack_collision_box
+      box_x = 0
+      box_y = 0
+      box_width = 0
+      box_height = 0
+
+      if direction.up? || direction.down?
+        box_x = attack_x - @attack_sprite.width / 2
+        box_y = attack_y - (@attack_sprite.height / ATTACK_FRAMES / 2)
+        box_width = @attack_sprite.width
+        box_height = @attack_sprite.height / ATTACK_FRAMES
+      elsif direction.left? || direction.right?
+        box_x = attack_x - (@attack_sprite.height / ATTACK_FRAMES / 2)
+        box_y = attack_y - @attack_sprite.width / 2
+        box_width = @attack_sprite.height / ATTACK_FRAMES
+        box_height = @attack_sprite.width
+      end
+
+      Box.new(
+        loc: Location.new(box_x, box_y),
+        width: box_width,
+        height: box_height
+      )
     end
 
     def enemy_bump(enemies)
@@ -137,14 +152,6 @@ module Dungeon
       delta = delta_t * PLAYER_MOVEMENT
 
       enemies = entities.select { |e| e.is_a?(Enemy) }
-
-      if attacking?
-        @attack_time += 1
-
-        if attack_time >= ATTACK_TIME
-          @attacking = false
-        end
-      end
 
       if enemy_bump_flash_time >= ENEMY_BUMP_FLASH_TIME
         @enemy_bump_flash_time = 0
@@ -201,6 +208,36 @@ module Dungeon
       end
 
       attack if !attacking? && LibRay.key_pressed?(LibRay::KEY_SPACE)
+
+      # attack timer
+      if attacking?
+        @attack_time += 1
+
+        if attack_time >= ATTACK_TIME
+          @attacking = false
+        end
+      end
+
+      if attacking?
+        @attack_x = @attack_y = @attack_rotation = 0
+
+        if direction.up?
+          @attack_y = -height / 2
+        elsif direction.down?
+          @attack_y = height / 2
+          @attack_rotation = 180
+        elsif direction.left?
+          @attack_x = -width / 2
+          @attack_rotation = -90
+        elsif direction.right?
+          @attack_x = width / 2
+          @attack_rotation = 90
+        end
+
+        puts "movement: y: #{y} ay: #{attack_y}"
+
+        # TODO: check for collisions with sword with enemies
+      end
     end
   end
 end

@@ -5,7 +5,7 @@ module Dungeon
     property height : Float32
     property collision_box : Box
 
-    DRAW_COLLISION_BOXES = false
+    DRAW_COLLISION_BOXES = true
 
     def initialize(@loc : Location, @width : Float32, @height : Float32, @collision_box : Box)
     end
@@ -83,12 +83,12 @@ module Dungeon
       raise "implement in super class"
     end
 
-    def draw_collision_box
+    def draw_collision_box(box : Box = collision_box)
       LibRay.draw_rectangle_lines(
-        pos_x: x + collision_box.x,
-        pos_y: y + collision_box.y,
-        width: collision_box.width,
-        height: collision_box.height,
+        pos_x: x + box.x,
+        pos_y: y + box.y,
+        width: box.width,
+        height: box.height,
         color: LibRay::WHITE
       )
     end

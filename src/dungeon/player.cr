@@ -56,8 +56,6 @@ module Dungeon
 
     def draw
       if attacking?
-        puts "draw: #{y + attack_y}"
-
         LibRay.draw_texture_pro(
           texture: @attack_sprite,
           source_rec: LibRay::Rectangle.new(
@@ -233,8 +231,6 @@ module Dungeon
           @attack_x = width / 2
           @attack_rotation = 90
         end
-
-        puts "movement: y: #{y} ay: #{attack_y}"
 
         # TODO: check for collisions with sword with enemies
       end

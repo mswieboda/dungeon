@@ -10,6 +10,8 @@ module Dungeon
     ATTACK_TIME   = 15
     ATTACK_FRAMES =  5
 
+    SWORD_DAMAGE = 5
+
     def initialize(@loc : Location, @direction : Direction, @x_offset : Float32, @y_offset : Float32)
       @tint = TINT_DEFAULT
       @attacking = false
@@ -129,7 +131,7 @@ module Dungeon
     def attack_enemies(enemies : Array(Enemy))
       enemies.each do |enemy|
         if collision?(enemy)
-          enemy.hit
+          enemy.hit(SWORD_DAMAGE)
         end
       end
     end

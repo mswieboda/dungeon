@@ -12,6 +12,9 @@ module Dungeon
     PLAYER_HIT_FLASH_INTERVAL =  5
     PLAYER_HIT_FLASH_TINT     = LibRay::RED
 
+    MAX_HIT_POINTS  = 10
+    DRAW_HIT_POINTS = true
+
     def initialize(@loc : Location, @width : Float32, @height : Float32, @collision_box : Box)
       super
 
@@ -21,6 +24,7 @@ module Dungeon
 
       @tint = TINT_DEFAULT
 
+      @hit_points = MAX_HIT_POINTS
       @player_hit_flash_time = 0
       @invincible = false
     end
@@ -40,9 +44,28 @@ module Dungeon
       )
 
       draw_collision_box if draw_collision_box?
+      draw_hit_points if DRAW_HIT_POINTS
     end
 
-    def movement(collision_rects)
+    def draw_hit_points
+      color = LibRay::GREEN
+
+      if @hit_points <= MAX_HIT_POINTS / 4
+        color = LibRay::RED
+      elsif @hit_points <= MAX_HIT_POINTS / 2
+        color = LibRay::ORANGE
+      end
+
+      LibRay.draw_text(
+        text: @hit_points.to_s,
+        pos_x: x,
+        pos_y: y - height / 1.5,
+        font_size: 20,
+        color: color
+      )
+    end
+
+    def movement(_entities)
       if @player_hit_flash_time >= PLAYER_HIT_FLASH_TIME
         @player_hit_flash_time = 0
         @tint = TINT_DEFAULT
@@ -57,10 +80,11 @@ module Dungeon
       @invincible
     end
 
-    def hit
+    def hit(damage = 0)
       return if invincible?
       @invincible = true
       @player_hit_flash_time = 1
+      @hit_points -= damage
     end
   end
 end

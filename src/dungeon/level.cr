@@ -9,8 +9,6 @@ module Dungeon
 
     @game_over_text_color : LibRay::Color
 
-    DRAW_COLLISION_BOXES = true
-
     GAME_OVER_TIME = 150
 
     def initialize(@level_width, @level_height)

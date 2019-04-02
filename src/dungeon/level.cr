@@ -55,7 +55,7 @@ module Dungeon
     def update
       @drawables.clear
 
-      @collidables.each { |entity| entity.update(@collidables) unless entity.removed? }
+      @collidables.each { |entity| entity.update(@collidables.reject(entity)) unless entity.removed? }
 
       @player.update(@collidables)
 

@@ -7,6 +7,10 @@ module Dungeon
     getter tint : LibRay::Color
     getter? dead
 
+    @path_delta : Hash(Symbol, Int32)
+    @path_end_x : Float32
+    @path_end_y : Float32
+
     TINT_DEFAULT = LibRay::ORANGE
 
     PLAYER_HIT_FLASH_TIME     = 15
@@ -17,6 +21,9 @@ module Dungeon
 
     MAX_HIT_POINTS  = 15
     DRAW_HIT_POINTS = true
+
+    MOVEMENT_X = 100
+    MOVEMENT_Y = 100
 
     def initialize(@loc : Location, @width : Float32, @height : Float32, @collision_box : Box)
       super
@@ -33,6 +40,19 @@ module Dungeon
 
       @death_timer = 0
       @dead = false
+
+      @path_index = 0
+      @path_deltas = [
+        {:dx => 20},
+        {:dy => 30},
+        {:dx => -20, :dy => 50},
+        {:dy => -30},
+      ]
+      @path_delta = @path_deltas[0]
+      @path_end_x = x
+      @path_end_x += @path_delta[:dx] if @path_delta.has_key?(:dx)
+      @path_end_y = y
+      @path_end_y += @path_delta[:dy] if @path_delta.has_key?(:dy)
     end
 
     def texture_file_name
@@ -81,7 +101,7 @@ module Dungeon
       )
     end
 
-    def update(_entities)
+    def update(entities)
       if @player_hit_flash_time >= PLAYER_HIT_FLASH_TIME
         @player_hit_flash_time = 0
         @tint = TINT_DEFAULT
@@ -99,6 +119,65 @@ module Dungeon
         @tint.a = 255 - 255 * @death_timer / DEATH_TIME
         @death_timer += 1
       end
+
+      movement(entities)
+    end
+
+    def movement(entities)
+      if @path_deltas.any?
+        delta_t = LibRay.get_frame_time
+        delta_x = delta_y = 0_f32
+
+        delta_x = delta_t * MOVEMENT_X * @path_delta[:dx] / @path_delta[:dx].abs if @path_delta.has_key?(:dx)
+        delta_y = delta_t * MOVEMENT_Y * @path_delta[:dy] / @path_delta[:dy].abs if @path_delta.has_key?(:dy)
+
+        @loc.x += delta_x
+        @loc.y += delta_y
+
+        if collisions?(entities)
+          @loc.x -= delta_x
+          @loc.y -= delta_y
+
+          new_path
+        else
+          new_path if path_ended?(delta_x, delta_y)
+        end
+      end
+    end
+
+    def new_path
+      @path_index = rand(@path_deltas.size) # @path_index >= @path_deltas.size - 1 ? 0 : @path_index + 1
+
+      @path_delta = @path_deltas[@path_index]
+      @path_end_x = x
+      @path_end_x += @path_delta[:dx] if @path_delta.has_key?(:dx)
+      @path_end_y = y
+      @path_end_y += @path_delta[:dy] if @path_delta.has_key?(:dy)
+    end
+
+    def path_ended?(delta_x, delta_y)
+      reached_x = false
+      reached_y = false
+
+      if delta_x > 0 && x >= @path_end_x
+        reached_x = true
+      elsif delta_x < 0 && x <= @path_end_x
+        reached_x = true
+      elsif delta_x == 0 && x == @path_end_x
+        reached_x = true
+      end
+
+      return false unless reached_x
+
+      if delta_y > 0 && y >= @path_end_y
+        reached_y = true
+      elsif delta_y < 0 && y <= @path_end_y
+        reached_y = true
+      elsif delta_y == 0 && y == @path_end_y
+        reached_y = true
+      end
+
+      reached_y
     end
 
     def invincible?

@@ -125,44 +125,44 @@ module Dungeon
 
     def movement(entities)
       delta_t = LibRay.get_frame_time
-      delta = delta_t * PLAYER_MOVEMENT
+      speed = delta_t * PLAYER_MOVEMENT
 
       enemies = entities.select { |e| e.is_a?(Enemy) }
 
       if LibRay.key_down?(LibRay::KEY_W)
         @direction = Direction::Up
-        @loc.y -= delta
+        @loc.y -= speed
 
         enemy_bump(enemies)
 
-        @loc.y += delta if collisions?(entities)
+        @loc.y += speed if collisions?(entities)
       end
 
       if LibRay.key_down?(LibRay::KEY_A)
         @direction = Direction::Left
-        @loc.x -= delta
+        @loc.x -= speed
 
         enemy_bump(enemies)
 
-        @loc.x += delta if collisions?(entities)
+        @loc.x += speed if collisions?(entities)
       end
 
       if LibRay.key_down?(LibRay::KEY_S)
         @direction = Direction::Down
-        @loc.y += delta
+        @loc.y += speed
 
         enemy_bump(enemies)
 
-        @loc.y -= delta if collisions?(entities)
+        @loc.y -= speed if collisions?(entities)
       end
 
       if LibRay.key_down?(LibRay::KEY_D)
         @direction = Direction::Right
-        @loc.x += delta
+        @loc.x += speed
 
         enemy_bump(enemies)
 
-        @loc.x -= delta if collisions?(entities)
+        @loc.x -= speed if collisions?(entities)
       end
     end
   end

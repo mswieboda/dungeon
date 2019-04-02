@@ -12,7 +12,7 @@ module Dungeon
     PLAYER_HIT_FLASH_INTERVAL =  5
     PLAYER_HIT_FLASH_TINT     = LibRay::RED
 
-    MAX_HIT_POINTS  = 10
+    MAX_HIT_POINTS  = 50
     DRAW_HIT_POINTS = true
 
     def initialize(@loc : Location, @width : Float32, @height : Float32, @collision_box : Box)
@@ -50,11 +50,21 @@ module Dungeon
     def draw_hit_points
       color = LibRay::GREEN
 
-      if @hit_points <= MAX_HIT_POINTS / 4
-        color = LibRay::RED
-      elsif @hit_points <= MAX_HIT_POINTS / 2
-        color = LibRay::ORANGE
+      red = 0
+      green = 255
+      blue = 0
+      alpha = 255
+
+      # green -> yellow -> red
+      if @hit_points >= MAX_HIT_POINTS / 2
+        red = (255 * MAX_HIT_POINTS / @hit_points) - 255
+        green = 255
+      elsif @hit_points < MAX_HIT_POINTS / 2
+        red = 255
+        green = 255 * @hit_points / MAX_HIT_POINTS * 2
       end
+
+      color = LibRay::Color.new(r: red, g: green, b: blue, a: alpha)
 
       LibRay.draw_text(
         text: @hit_points.to_s,

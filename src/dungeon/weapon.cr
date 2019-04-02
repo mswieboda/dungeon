@@ -2,8 +2,6 @@ module Dungeon
   class Weapon < Entity
     property direction : Direction
     getter tint : LibRay::Color
-    getter x_offset : Float32
-    getter y_offset : Float32
     getter? attacking
 
     TINT_DEFAULT = LibRay::WHITE
@@ -13,18 +11,21 @@ module Dungeon
 
     SWORD_DAMAGE = 5
 
-    def initialize(@loc : Location, @direction : Direction, @x_offset : Float32, @y_offset : Float32)
+    def initialize(@loc : Location, @direction : Direction)
+      image = LibRay.load_image(File.join(__DIR__, "assets/sword-attack.png"))
+      @attack_sprite = LibRay.load_texture_from_image(image)
+
+      width = @attack_sprite.width.to_f32
+      height = (@attack_sprite.height / ATTACK_FRAMES).to_f32
+      collision_box = Box.new(loc: Location.new(0, 0), width: width, height: height)
+
+      super(loc, width, height, collision_box)
+
       @tint = TINT_DEFAULT
       @attacking = false
       @attack_time = 0
       @attack_sprites = [] of LibRay::Texture2D
       @attack_x = @attack_y = @attack_rotation = 0_f32
-      image = LibRay.load_image(File.join(__DIR__, "assets/sword-attack.png"))
-      @attack_sprite = LibRay.load_texture_from_image(image)
-
-      collision_box = Box.new(Location.new(0, 0), width: @attack_sprite.width, height: @attack_sprite.width / ATTACK_FRAMES)
-
-      super(@loc, @attack_sprite.width, @attack_sprite.height, collision_box)
     end
 
     def draw
@@ -34,19 +35,19 @@ module Dungeon
         texture: @attack_sprite,
         source_rec: LibRay::Rectangle.new(
           x: 0,
-          y: attack_frame * @attack_sprite.height / ATTACK_FRAMES,
-          width: @attack_sprite.width,
-          height: @attack_sprite.height / ATTACK_FRAMES
+          y: attack_frame * height,
+          width: width,
+          height: height
         ),
         dest_rec: LibRay::Rectangle.new(
           x: x + @attack_x,
           y: y + @attack_y,
-          width: @attack_sprite.width,
-          height: @attack_sprite.height / ATTACK_FRAMES
+          width: width,
+          height: height
         ),
         origin: LibRay::Vector2.new(
-          x: @attack_sprite.width / 2,
-          y: @attack_sprite.height / ATTACK_FRAMES / 2
+          x: width / 2,
+          y: height / 2
         ),
         rotation: @attack_rotation,
         tint: tint
@@ -86,15 +87,23 @@ module Dungeon
       @attack_x = @attack_y = @attack_rotation = 0
 
       if direction.up?
-        @attack_y = -y_offset
+        @attack_y = -height / 2
       elsif direction.down?
-        @attack_y = y_offset
+        @attack_y = height / 2
         @attack_rotation = 180
       elsif direction.left?
-        @attack_x = -x_offset
+        @attack_x = -width / 2
+
+        # Note: specific sword offset
+        @attack_y = -height / 2
+
         @attack_rotation = -90
       elsif direction.right?
-        @attack_x = x_offset
+        @attack_x = width / 2
+
+        # Note: specific sword offset
+        @attack_y = -height / 2
+
         @attack_rotation = 90
       end
 
@@ -105,15 +114,15 @@ module Dungeon
       box_height = 0
 
       if direction.up? || direction.down?
-        box_x = @attack_x - @attack_sprite.width / 2
-        box_y = @attack_y - (@attack_sprite.height / ATTACK_FRAMES / 2)
-        box_width = @attack_sprite.width
-        box_height = @attack_sprite.height / ATTACK_FRAMES
+        box_x = @attack_x - width / 2
+        box_y = @attack_y - (height / 2)
+        box_width = width
+        box_height = height
       elsif direction.left? || direction.right?
-        box_x = @attack_x - (@attack_sprite.height / ATTACK_FRAMES / 2)
-        box_y = @attack_y - @attack_sprite.width / 2
-        box_width = @attack_sprite.height / ATTACK_FRAMES
-        box_height = @attack_sprite.width
+        box_x = @attack_x - (height / 2)
+        box_y = @attack_y - width / 2
+        box_width = height
+        box_height = width
       end
 
       # change weapon loc, and collision_box

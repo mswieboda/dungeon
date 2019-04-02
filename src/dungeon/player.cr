@@ -4,6 +4,7 @@ module Dungeon
   class Player < Entity
     include DirectionTextures
 
+    getter origin
     getter tint : LibRay::Color
     getter weapon : Weapon
 
@@ -20,8 +21,8 @@ module Dungeon
     INVINCIBLE_FLASH_INTERVAL = 15
     INVINCIBLE_TINT           = FADED
 
-    def initialize(@loc : Location, @width : Float32, @height : Float32, @collision_box : Box)
-      super
+    def initialize(@loc : Location, @origin : Location, @width : Float32, @height : Float32, @collision_box : Box)
+      super(@loc, @width, @height, @collision_box)
 
       @direction = Direction::Up
       @direction_textures = [] of LibRay::Texture2D
@@ -29,7 +30,8 @@ module Dungeon
 
       @tint = TINT_DEFAULT
 
-      @weapon = Weapon.new(loc: loc, direction: @direction, x_offset: width / 2, y_offset: height / 2)
+      # @weapon = Weapon.new(loc: loc, direction: @direction, x_offset: width / 2, y_offset: height / 2)
+      @weapon = Weapon.new(loc: origin, direction: @direction)
 
       @enemy_flash_time = 0
       @invincible_time = 0
@@ -51,7 +53,28 @@ module Dungeon
         tint: tint
       )
 
-      draw_collision_box if draw_collision_box?
+      if draw_collision_box?
+        draw_collision_box
+
+        # draw origin
+        line_size = 5
+
+        # x line
+        LibRay.draw_line_bezier(
+          start_pos: LibRay::Vector2.new(x: x + origin.x + line_size, y: y + origin.y),
+          end_pos: LibRay::Vector2.new(x: x + origin.x - line_size, y: y + origin.y),
+          thick: 1,
+          color: LibRay::MAGENTA
+        )
+
+        # y line
+        LibRay.draw_line_bezier(
+          start_pos: LibRay::Vector2.new(x: x + origin.x, y: y + origin.y + line_size),
+          end_pos: LibRay::Vector2.new(x: x + origin.x, y: y + origin.y - line_size),
+          thick: 1,
+          color: LibRay::MAGENTA
+        )
+      end
     end
 
     def enemy_bump(enemies)
@@ -96,7 +119,7 @@ module Dungeon
       movement(entities)
 
       weapon.direction = direction
-      weapon.loc = loc
+      weapon.loc = Location.new(x + origin.x, y + origin.y)
       weapon.update(entities)
     end
 

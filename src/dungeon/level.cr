@@ -16,8 +16,10 @@ module Dungeon
       @collidables = [] of Entity
 
       @player_location = Location.new(150, 150)
+
       @player = Player.new(
         loc: @player_location,
+        origin: Location.new(0, 24),
         width: 48,
         height: 64,
         collision_box: Box.new(

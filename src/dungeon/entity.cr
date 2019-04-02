@@ -107,5 +107,8 @@ module Dungeon
         y + collision_box.y < entity.y + entity.collision_box.y + entity.collision_box.height &&
         y + collision_box.y + collision_box.height > entity.y + entity.collision_box.y
     end
+
+    def removed?
+    end
   end
 end

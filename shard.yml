@@ -1,12 +1,12 @@
-name: cray-test
+name: dungeon
 version: 0.1.0
 
 authors:
-  - Matt Swieboda <matts@topsteptrader.com>
+  - Matt Swieboda <mswieboda@users.noreply.github.com>
 
 targets:
-  cray-test:
-    main: src/cray-test.cr
+  dungeon:
+    main: src/dungeon.cr
 
 crystal: 0.27.2
 

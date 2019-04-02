@@ -13,9 +13,9 @@ module Dungeon
 
     TINT_DEFAULT = LibRay::ORANGE
 
-    PLAYER_HIT_FLASH_TIME     = 15
-    PLAYER_HIT_FLASH_INTERVAL =  5
-    PLAYER_HIT_FLASH_TINT     = LibRay::RED
+    HIT_FLASH_TIME     = 15
+    HIT_FLASH_INTERVAL =  5
+    HIT_FLASH_TINT     = LibRay::RED
 
     DEATH_TIME = 15
 
@@ -35,7 +35,7 @@ module Dungeon
       @tint = TINT_DEFAULT
 
       @hit_points = MAX_HIT_POINTS
-      @player_hit_flash_time = 0
+      @hit_flash_time = 0
       @invincible = false
 
       @death_timer = 0
@@ -108,13 +108,13 @@ module Dungeon
     end
 
     def update(entities)
-      if @player_hit_flash_time >= PLAYER_HIT_FLASH_TIME
-        @player_hit_flash_time = 0
+      if @hit_flash_time >= HIT_FLASH_TIME
+        @hit_flash_time = 0
         @tint = TINT_DEFAULT
         @invincible = false
-      elsif @player_hit_flash_time > 0
-        @tint = (@player_hit_flash_time / PLAYER_HIT_FLASH_INTERVAL).to_i % 2 == 1 ? TINT_DEFAULT : PLAYER_HIT_FLASH_TINT
-        @player_hit_flash_time += 1
+      elsif @hit_flash_time > 0
+        @tint = (@hit_flash_time / HIT_FLASH_INTERVAL).to_i % 2 == 1 ? TINT_DEFAULT : HIT_FLASH_TINT
+        @hit_flash_time += 1
       end
 
       if @death_timer >= DEATH_TIME
@@ -210,7 +210,7 @@ module Dungeon
       return if invincible?
 
       @invincible = true
-      @player_hit_flash_time = 1
+      @hit_flash_time = 1
       @hit_points -= damage
 
       die if @hit_points <= 0

@@ -4,7 +4,8 @@ module Dungeon
   class Enemy < Entity
     include DirectionTextures
 
-    property tint : LibRay::Color
+    getter tint : LibRay::Color
+    getter? dead
 
     TINT_DEFAULT = LibRay::ORANGE
 
@@ -27,6 +28,7 @@ module Dungeon
       @hit_points = MAX_HIT_POINTS
       @player_hit_flash_time = 0
       @invincible = false
+      @dead = false
     end
 
     def texture_file_name

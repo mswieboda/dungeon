@@ -4,8 +4,8 @@ module Dungeon
   class Player < Entity
     include DirectionTextures
 
-    property tint : LibRay::Color
-    property weapon : Weapon
+    getter tint : LibRay::Color
+    getter weapon : Weapon
 
     FADED = LibRay::Color.new(r: 255, g: 255, b: 255, a: 100)
 

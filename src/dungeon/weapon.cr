@@ -1,9 +1,10 @@
 module Dungeon
   class Weapon < Entity
     property direction : Direction
-    property tint : LibRay::Color
-    property x_offset : Float32
-    property y_offset : Float32
+    getter tint : LibRay::Color
+    getter x_offset : Float32
+    getter y_offset : Float32
+    getter? attacking
 
     TINT_DEFAULT = LibRay::WHITE
 
@@ -52,10 +53,6 @@ module Dungeon
       )
 
       draw_collision_box if draw_collision_box?
-    end
-
-    def attacking?
-      @attacking
     end
 
     def attack

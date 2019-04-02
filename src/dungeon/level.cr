@@ -2,12 +2,12 @@ require "./location"
 
 module Dungeon
   class Level
-    property level_width : Int32
-    property level_height : Int32
-    property player_location : Location
-    property player : Player
-    property drawables
-    property collidables
+    getter level_width : Int32
+    getter level_height : Int32
+    getter player_location : Location
+    getter player : Player
+    getter drawables
+    getter collidables
 
     DRAW_COLLISION_BOXES = true
 

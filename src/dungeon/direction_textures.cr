@@ -1,6 +1,6 @@
 module DirectionTextures
-  property direction_textures : Array(LibRay::Texture2D)
-  property direction : Direction
+  getter direction_textures : Array(LibRay::Texture2D)
+  getter direction : Direction
 
   def load_textures
     Direction.each do |dir|

@@ -10,8 +10,8 @@ module Dungeon
 
   @@level = Level.new(SCREEN_WIDTH, SCREEN_HEIGHT)
 
-  def self.movement
-    @@level.movement
+  def self.update
+    @@level.update
   end
 
   def self.draw
@@ -27,7 +27,7 @@ module Dungeon
 
   def self.game_loop
     while !LibRay.window_should_close?
-      movement()
+      update()
       draw()
     end
   end

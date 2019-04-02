@@ -53,13 +53,13 @@ module Dungeon
       @drawables.each { |drawable| drawable.draw }
     end
 
-    def movement
+    def update
       # change order of drawing based on y coordinates
       @drawables.sort_by! { |entity| entity.y }
 
-      @collidables.each { |entity| entity.movement(@collidables) }
+      @collidables.each { |entity| entity.update(@collidables) }
 
-      @player.movement(@collidables)
+      @player.update(@collidables)
     end
   end
 end

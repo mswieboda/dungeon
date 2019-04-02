@@ -12,9 +12,9 @@ module Dungeon
     PLAYER_MOVEMENT = 200
     TINT_DEFAULT    = LibRay::WHITE
 
-    ENEMY_BUMP_FLASH_TIME     = 15
-    ENEMY_BUMP_FLASH_INTERVAL =  5
-    ENEMY_BUMP_FLASH_TINT     = LibRay::RED
+    ENEMY_FLASH_TIME     = 15
+    ENEMY_FLASH_INTERVAL =  5
+    ENEMY_FLASH_TINT     = LibRay::RED
 
     INVINCIBLE_TIME           = 45
     INVINCIBLE_FLASH_INTERVAL = 15
@@ -31,7 +31,7 @@ module Dungeon
 
       @weapon = Weapon.new(loc: loc, direction: @direction, x_offset: width / 2, y_offset: height / 2)
 
-      @enemy_bump_flash_time = 0
+      @enemy_flash_time = 0
       @invincible_time = 0
     end
 
@@ -58,13 +58,46 @@ module Dungeon
       enemies.each do |enemy|
         if !invincible? && collision?(enemy)
           # health -= enemy.bump_damage
-          @enemy_bump_flash_time = 1
+          @enemy_flash_time = 1
         end
       end
     end
 
+    def enemy_flash
+      if @enemy_flash_time >= ENEMY_FLASH_TIME
+        @enemy_flash_time = 0
+        @tint = TINT_DEFAULT
+        @invincible_time = 1
+      elsif @enemy_flash_time > 0
+        @tint = (@enemy_flash_time / ENEMY_FLASH_INTERVAL).to_i % 2 == 1 ? TINT_DEFAULT : ENEMY_FLASH_TINT
+        @enemy_flash_time += 1
+      end
+    end
+
     def invincible?
-      @enemy_bump_flash_time > 0 || @invincible_time > 0
+      @enemy_flash_time > 0 || @invincible_time > 0
+    end
+
+    def invincible_flash
+      if @invincible_time >= INVINCIBLE_TIME
+        @invincible_time = 0
+        @tint = TINT_DEFAULT
+      elsif @invincible_time > 0
+        @tint = (@invincible_time / INVINCIBLE_FLASH_INTERVAL).to_i % 2 == 1 ? TINT_DEFAULT : INVINCIBLE_TINT
+        @invincible_time += 1
+      end
+    end
+
+    def update(entities)
+      enemy_flash()
+
+      invincible_flash()
+
+      movement(entities)
+
+      weapon.direction = direction
+      weapon.loc = loc
+      weapon.update(entities)
     end
 
     def movement(entities)
@@ -73,24 +106,6 @@ module Dungeon
 
       enemies = entities.select { |e| e.is_a?(Enemy) }
 
-      if @enemy_bump_flash_time >= ENEMY_BUMP_FLASH_TIME
-        @enemy_bump_flash_time = 0
-        @tint = TINT_DEFAULT
-        @invincible_time = 1
-      elsif @enemy_bump_flash_time > 0
-        @tint = (@enemy_bump_flash_time / ENEMY_BUMP_FLASH_INTERVAL).to_i % 2 == 1 ? TINT_DEFAULT : ENEMY_BUMP_FLASH_TINT
-        @enemy_bump_flash_time += 1
-      end
-
-      if @invincible_time >= INVINCIBLE_TIME
-        @invincible_time = 0
-        @tint = TINT_DEFAULT
-      elsif @invincible_time > 0
-        @tint = (@invincible_time / INVINCIBLE_FLASH_INTERVAL).to_i % 2 == 1 ? TINT_DEFAULT : INVINCIBLE_TINT
-        @invincible_time += 1
-      end
-
-      # movement
       if LibRay.key_down?(LibRay::KEY_W)
         @direction = Direction::Up
         @loc.y -= delta
@@ -126,10 +141,6 @@ module Dungeon
 
         @loc.x -= delta if collisions?(entities)
       end
-
-      weapon.direction = direction
-      weapon.loc = loc
-      weapon.movement(entities)
     end
   end
 end

@@ -93,7 +93,7 @@ module Dungeon
       )
     end
 
-    def movement(_entities)
+    def update(_entities)
       raise "implement in super class"
     end
 

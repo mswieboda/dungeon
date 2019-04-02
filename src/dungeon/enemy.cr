@@ -75,7 +75,7 @@ module Dungeon
       )
     end
 
-    def movement(_entities)
+    def update(_entities)
       if @player_hit_flash_time >= PLAYER_HIT_FLASH_TIME
         @player_hit_flash_time = 0
         @tint = TINT_DEFAULT

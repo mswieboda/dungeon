@@ -67,7 +67,7 @@ module Dungeon
       (@attack_time / (ATTACK_TIME / ATTACK_FRAMES)).to_i
     end
 
-    def movement(entities)
+    def update(entities)
       attack if !attacking? && LibRay.key_pressed?(LibRay::KEY_SPACE)
       return unless attacking?
 

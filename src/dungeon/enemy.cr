@@ -47,6 +47,12 @@ module Dungeon
         {:dy => 30},
         {:dx => -20, :dy => 50},
         {:dy => -30},
+        {:dy => 50},
+        {:dx => 20, :dy => 30},
+        {:dx => 50, :dy => 10},
+        {:dx => 50},
+        {:dx => 30, :dy => -50},
+        {:dy => -10},
       ]
       @path_delta = @path_deltas[0]
       @path_end_x = x
@@ -125,6 +131,8 @@ module Dungeon
 
     def movement(entities)
       if @path_deltas.any?
+        player = entities.find { |e| e.is_a?(Player) }.as(Player)
+
         delta_t = LibRay.get_frame_time
         delta_x = delta_y = 0_f32
 
@@ -135,6 +143,8 @@ module Dungeon
         @loc.y += delta_y
 
         if collisions?(entities)
+          player_bump_detection(player)
+
           @loc.x -= delta_x
           @loc.y -= delta_y
 
@@ -145,8 +155,14 @@ module Dungeon
       end
     end
 
+    def player_bump_detection(player : Player)
+      if !invincible? && collision?(player)
+        player.enemy_bump(self)
+      end
+    end
+
     def new_path
-      @path_index = rand(@path_deltas.size) # @path_index >= @path_deltas.size - 1 ? 0 : @path_index + 1
+      @path_index = rand(@path_deltas.size)
 
       @path_delta = @path_deltas[@path_index]
       @path_end_x = x

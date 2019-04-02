@@ -77,12 +77,15 @@ module Dungeon
       end
     end
 
-    def enemy_bump(enemies)
+    def enemy_bump_detections(enemies)
       enemies.each do |enemy|
-        if !invincible? && collision?(enemy)
-          # health -= enemy.bump_damage
-          @enemy_flash_time = 1
-        end
+        enemy_bump(enemy) if collision?(enemy)
+      end
+    end
+
+    def enemy_bump(enemy)
+      if !invincible?
+        @enemy_flash_time = 1
       end
     end
 
@@ -133,7 +136,7 @@ module Dungeon
         @direction = Direction::Up
         @loc.y -= speed
 
-        enemy_bump(enemies)
+        enemy_bump_detections(enemies)
 
         @loc.y += speed if collisions?(entities)
       end
@@ -142,7 +145,7 @@ module Dungeon
         @direction = Direction::Left
         @loc.x -= speed
 
-        enemy_bump(enemies)
+        enemy_bump_detections(enemies)
 
         @loc.x += speed if collisions?(entities)
       end
@@ -151,7 +154,7 @@ module Dungeon
         @direction = Direction::Down
         @loc.y += speed
 
-        enemy_bump(enemies)
+        enemy_bump_detections(enemies)
 
         @loc.y -= speed if collisions?(entities)
       end
@@ -160,7 +163,7 @@ module Dungeon
         @direction = Direction::Right
         @loc.x += speed
 
-        enemy_bump(enemies)
+        enemy_bump_detections(enemies)
 
         @loc.x -= speed if collisions?(entities)
       end

@@ -29,6 +29,7 @@ module Dungeon
         )
       )
 
+      @collidables << @player
       @collidables << Wall.new(loc: Location.new(level_width / 2, 16), width: level_width, height: 32)
       @collidables << Wall.new(loc: Location.new(level_width - 16, level_height / 2), width: 32, height: level_height)
       @collidables << Wall.new(loc: Location.new(level_width / 2, level_height - 16), width: level_width, height: 32)
@@ -56,14 +57,10 @@ module Dungeon
       @drawables.clear
 
       @collidables.each { |entity| entity.update(@collidables.reject(entity)) unless entity.removed? }
-
-      @player.update(@collidables)
-
       @collidables.reject!(&.removed?)
 
       # change order of drawing based on y coordinates
       @drawables.concat(@collidables)
-      @drawables << @player
       @drawables.sort_by!(&.y)
     end
   end

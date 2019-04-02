@@ -25,6 +25,8 @@ module Dungeon
     MOVEMENT_X = 100
     MOVEMENT_Y = 100
 
+    BUMP_DAMAGE = 5
+
     def initialize(@loc : Location, @width : Float32, @height : Float32, @collision_box : Box)
       super
 
@@ -34,10 +36,9 @@ module Dungeon
 
       @tint = TINT_DEFAULT
 
-      @hit_points = MAX_HIT_POINTS
-      @hit_flash_time = 0
-      @invincible = false
+      @hit_flash_timer = 0
 
+      @hit_points = MAX_HIT_POINTS
       @death_timer = 0
       @dead = false
 
@@ -108,30 +109,16 @@ module Dungeon
     end
 
     def update(entities)
-      if @hit_flash_time >= HIT_FLASH_TIME
-        @hit_flash_time = 0
-        @tint = TINT_DEFAULT
-        @invincible = false
-      elsif @hit_flash_time > 0
-        @tint = (@hit_flash_time / HIT_FLASH_INTERVAL).to_i % 2 == 1 ? TINT_DEFAULT : HIT_FLASH_TINT
-        @hit_flash_time += 1
-      end
-
-      if @death_timer >= DEATH_TIME
-        @death_timer = 0
-        @dead = true
-      elsif @death_timer > 0
-        @tint = TINT_DEFAULT
-        @tint.a = 255 - 255 * @death_timer / DEATH_TIME
-        @death_timer += 1
-      end
+      hit_flash
+      death_fade
 
       movement(entities)
     end
 
     def movement(entities)
       if @path_deltas.any?
-        player = entities.find { |e| e.is_a?(Player) }.as(Player)
+        player = entities.find(&.is_a?(Player))
+        player = player.as(Player) if player
 
         delta_t = LibRay.get_frame_time
         delta_x = delta_y = 0_f32
@@ -143,7 +130,7 @@ module Dungeon
         @loc.y += delta_y
 
         if collisions?(entities)
-          player_bump_detection(player)
+          player_bump_detection(player) if player
 
           @loc.x -= delta_x
           @loc.y -= delta_y
@@ -152,12 +139,6 @@ module Dungeon
         else
           new_path if path_ended?(delta_x, delta_y)
         end
-      end
-    end
-
-    def player_bump_detection(player : Player)
-      if !invincible? && collision?(player)
-        player.enemy_bump(self)
       end
     end
 
@@ -196,12 +177,42 @@ module Dungeon
       reached_y
     end
 
+    def hit_flash
+      if @hit_flash_timer >= HIT_FLASH_TIME
+        @hit_flash_timer = 0
+        @tint = TINT_DEFAULT
+      elsif @hit_flash_timer > 0
+        @tint = (@hit_flash_timer / HIT_FLASH_INTERVAL).to_i % 2 == 1 ? TINT_DEFAULT : HIT_FLASH_TINT
+        @hit_flash_timer += 1
+      end
+    end
+
+    def death_fade
+      if @death_timer >= DEATH_TIME
+        @death_timer = 0
+        @dead = true
+      elsif @death_timer > 0
+        @tint = TINT_DEFAULT
+        @tint.a = 255 - 255 * @death_timer / DEATH_TIME
+        @death_timer += 1
+      end
+    end
+
+    def player_bump_detection(player : Player)
+      if !invincible? && collision?(player)
+        player.enemy_bump(bump_damage)
+      end
+    end
+
+    def bump_damage
+      BUMP_DAMAGE
+    end
+
     def invincible?
-      @invincible
+      @hit_flash_timer > 0 || @death_timer > 0
     end
 
     def die
-      @invincible = true
       @hit_points = 0
       @death_timer = 1
     end
@@ -209,8 +220,7 @@ module Dungeon
     def hit(damage = 0)
       return if invincible?
 
-      @invincible = true
-      @hit_flash_time = 1
+      @hit_flash_timer = 1
       @hit_points -= damage
 
       die if @hit_points <= 0

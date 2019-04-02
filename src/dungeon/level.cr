@@ -4,12 +4,14 @@ module Dungeon
   class Level
     getter level_width : Int32
     getter level_height : Int32
-    getter player_location : Location
     getter player : Player
-    getter drawables
-    getter collidables
+    getter? game_over
+
+    @game_over_text_color : LibRay::Color
 
     DRAW_COLLISION_BOXES = true
+
+    GAME_OVER_TIME = 150
 
     def initialize(@level_width, @level_height)
       @drawables = [] of Entity
@@ -47,10 +49,39 @@ module Dungeon
           height: 16
         )
       )
+
+      @game_over_timer = 0
+      @game_over = false
+      @game_over_text_font = LibRay.get_default_font
+      @game_over_text = "GAME OVER"
+      @game_over_text_font_size = 100
+      @game_over_text_spacing = 15
+      @game_over_text_color = LibRay::WHITE
+      @game_over_text_measured = LibRay.measure_text_ex(
+        sprite_font: @game_over_text_font,
+        text: @game_over_text,
+        font_size: @game_over_text_font_size,
+        spacing: @game_over_text_spacing
+      )
+      @game_over_text_position = LibRay::Vector2.new(
+        x: level_width / 2 - @game_over_text_measured.x / 2,
+        y: level_height / 2 - @game_over_text_measured.y,
+      )
     end
 
     def draw
       @drawables.each(&.draw)
+
+      if game_over?
+        LibRay.draw_text_ex(
+          sprite_font: @game_over_text_font,
+          text: @game_over_text,
+          position: @game_over_text_position,
+          font_size: @game_over_text_font_size,
+          spacing: @game_over_text_spacing,
+          color: @game_over_text_color
+        )
+      end
     end
 
     def update
@@ -58,6 +89,15 @@ module Dungeon
 
       @collidables.each { |entity| entity.update(@collidables.reject(entity)) unless entity.removed? }
       @collidables.reject!(&.removed?)
+
+      if @player.dead?
+        if @game_over_timer >= GAME_OVER_TIME
+          @game_over_timer = 0
+          @game_over = true
+        else
+          @game_over_timer += 1
+        end
+      end
 
       # change order of drawing based on y coordinates
       @drawables.concat(@collidables)

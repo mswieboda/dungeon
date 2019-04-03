@@ -14,6 +14,7 @@ module Dungeon
     def initialize(@level_width, @level_height)
       @drawables = [] of Entity
       @collidables = [] of Entity
+      @items = [] of Item
 
       @player_location = Location.new(150, 150)
 
@@ -32,6 +33,8 @@ module Dungeon
       @collidables << Wall.new(loc: Location.new(level_width / 2, level_height - 16), width: level_width, height: 32)
       @collidables << Wall.new(loc: Location.new(16, level_height / 2), width: 32, height: level_height)
       @collidables << Wall.new(loc: Location.new(500, 500), width: 32, height: 100)
+
+      @items << Item.new(loc: Location.new(300, 150), name: :key)
 
       # enemies
       @collidables << Enemy.new(
@@ -94,6 +97,7 @@ module Dungeon
 
       # change order of drawing based on y coordinates
       @drawables.concat(@collidables)
+      @drawables.concat(@items)
       @drawables.sort_by!(&.y)
     end
   end

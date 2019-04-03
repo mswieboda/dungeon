@@ -56,8 +56,8 @@ module Dungeon
       LibRay.draw_texture_v(
         texture: direction_textures[direction.value],
         position: LibRay::Vector2.new(
-          x: loc.x - width / 2,
-          y: loc.y - height / 2
+          x: x - width / 2,
+          y: y - height / 2
         ),
         tint: @tint
       )

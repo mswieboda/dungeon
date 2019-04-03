@@ -70,42 +70,48 @@ module Dungeon
       delta_t = LibRay.get_frame_time
       speed = delta_t * PLAYER_MOVEMENT
 
+      collidables = entities.select(&.collidable?)
       enemies = entities.select(&.is_a?(Enemy)).map(&.as(Enemy))
+      items = entities.select(&.is_a?(Item)).map(&.as(Item))
 
       if LibRay.key_down?(LibRay::KEY_W)
         @direction = Direction::Up
         @loc.y -= speed
-
-        enemy_bump_detections(enemies)
-
-        @loc.y += speed if collisions?(entities)
       end
 
       if LibRay.key_down?(LibRay::KEY_A)
         @direction = Direction::Left
         @loc.x -= speed
-
-        enemy_bump_detections(enemies)
-
-        @loc.x += speed if collisions?(entities)
       end
 
       if LibRay.key_down?(LibRay::KEY_S)
         @direction = Direction::Down
         @loc.y += speed
-
-        enemy_bump_detections(enemies)
-
-        @loc.y -= speed if collisions?(entities)
       end
 
       if LibRay.key_down?(LibRay::KEY_D)
         @direction = Direction::Right
         @loc.x += speed
+      end
 
-        enemy_bump_detections(enemies)
+      enemy_bump_detections(enemies)
 
-        @loc.x -= speed if collisions?(entities)
+      if collisions?(collidables)
+        if direction.up?
+          @loc.y += speed
+        elsif direction.left?
+          @loc.x += speed
+        elsif direction.down?
+          @loc.y -= speed
+        elsif direction.right?
+          @loc.x -= speed
+        end
+      end
+
+      items.each do |item|
+        if collision?(item)
+          pick_up(item)
+        end
       end
     end
 
@@ -117,6 +123,10 @@ module Dungeon
 
     def enemy_bump(damage)
       hit(damage)
+    end
+
+    def pick_up(item : Item)
+      item.remove
     end
 
     def invincible_flash
@@ -133,8 +143,8 @@ module Dungeon
       super || @invincible_timer > 0
     end
 
-    def removed?
-      dead?
+    def collidable?
+      true
     end
   end
 end

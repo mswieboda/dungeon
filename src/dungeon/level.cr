@@ -13,13 +13,11 @@ module Dungeon
 
     def initialize(@level_width, @level_height)
       @drawables = [] of Entity
-      @collidables = [] of Entity
-      @items = [] of Item
+      @entities = [] of Entity
 
-      @player_location = Location.new(150, 150)
-
+      # player
       @player = Player.new(
-        loc: @player_location,
+        loc: Location.new(150, 150),
         collision_box: Box.new(
           loc: Location.new(-12, 16),
           width: 24,
@@ -27,17 +25,20 @@ module Dungeon
         )
       )
 
-      @collidables << @player
-      @collidables << Wall.new(loc: Location.new(level_width / 2, 16), width: level_width, height: 32)
-      @collidables << Wall.new(loc: Location.new(level_width - 16, level_height / 2), width: 32, height: level_height)
-      @collidables << Wall.new(loc: Location.new(level_width / 2, level_height - 16), width: level_width, height: 32)
-      @collidables << Wall.new(loc: Location.new(16, level_height / 2), width: 32, height: level_height)
-      @collidables << Wall.new(loc: Location.new(500, 500), width: 32, height: 100)
+      @entities << @player
 
-      @items << Item.new(loc: Location.new(300, 150), name: :key)
+      # walls
+      @entities << Wall.new(loc: Location.new(level_width / 2, 16), width: level_width, height: 32)
+      @entities << Wall.new(loc: Location.new(level_width - 16, level_height / 2), width: 32, height: level_height)
+      @entities << Wall.new(loc: Location.new(level_width / 2, level_height - 16), width: level_width, height: 32)
+      @entities << Wall.new(loc: Location.new(16, level_height / 2), width: 32, height: level_height)
+      @entities << Wall.new(loc: Location.new(500, 500), width: 32, height: 100)
+
+      # items
+      @entities << Item.new(loc: Location.new(300, 150), name: :key)
 
       # enemies
-      @collidables << Enemy.new(
+      @entities << Enemy.new(
         loc: Location.new(300, 300),
         collision_box: Box.new(
           loc: Location.new(-12, 16),
@@ -46,6 +47,7 @@ module Dungeon
         )
       )
 
+      # game over
       @game_over_timer = 0
       @game_over = false
       @game_over_text_font = LibRay.get_default_font
@@ -83,8 +85,8 @@ module Dungeon
     def update
       @drawables.clear
 
-      @collidables.each { |entity| entity.update(@collidables.reject(entity)) unless entity.removed? }
-      @collidables.reject!(&.removed?)
+      @entities.each { |entity| entity.update(@entities.reject(entity)) unless entity.removed? }
+      @entities.reject!(&.removed?)
 
       if @player.dead?
         if @game_over_timer >= GAME_OVER_TIME
@@ -96,8 +98,7 @@ module Dungeon
       end
 
       # change order of drawing based on y coordinates
-      @drawables.concat(@collidables)
-      @drawables.concat(@items)
+      @drawables.concat(@entities)
       @drawables.sort_by!(&.y)
     end
   end

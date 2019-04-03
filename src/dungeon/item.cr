@@ -41,5 +41,17 @@ module Dungeon
 
       draw_collision_box if draw_collision_box?
     end
+
+    def collidable?
+      false
+    end
+
+    def remove
+      @removed = true
+    end
+
+    def removed?
+      @removed
+    end
   end
 end

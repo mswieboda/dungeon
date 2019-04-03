@@ -99,5 +99,9 @@ module Dungeon
     def invincible?
       @hit_flash_timer > 0 || @death_timer > 0
     end
+
+    def removed?
+      dead?
+    end
   end
 end

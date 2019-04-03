@@ -10,7 +10,8 @@ module Dungeon
       draw_collision_box if draw_collision_box?
     end
 
-    def update(_entities)
+    def collidable?
+      true
     end
   end
 end

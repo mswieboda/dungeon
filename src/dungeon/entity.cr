@@ -81,7 +81,11 @@ module Dungeon
     end
 
     def update(_entities)
-      raise "implement in super class"
+    end
+
+    # used for checking for movement collisions
+    def collidable?
+      false
     end
 
     def collisions?(entities : Array(Entity))
@@ -96,6 +100,7 @@ module Dungeon
     end
 
     def removed?
+      false
     end
   end
 end

@@ -25,6 +25,8 @@ module Dungeon
     MOVEMENT_X = 100
     MOVEMENT_Y = 100
 
+    MOVE_WITH_PATH = false
+
     BUMP_DAMAGE = 5
 
     def initialize(@loc : Location, @width : Float32, @height : Float32, @collision_box : Box)
@@ -116,7 +118,7 @@ module Dungeon
     end
 
     def movement(entities)
-      if @path_deltas.any?
+      if @path_deltas.any? && MOVE_WITH_PATH
         player = entities.find(&.is_a?(Player))
         player = player.as(Player) if player
 

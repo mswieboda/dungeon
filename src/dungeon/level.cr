@@ -36,6 +36,7 @@ module Dungeon
 
       # items
       @entities << Item.new(loc: Location.new(300, 150), name: :key)
+      @entities << Item.new(loc: Location.new(200, 150), name: :hearts, frames: 2, rows: 3, row: 1, animation_fps: 5)
 
       # enemies
       @entities << Enemy.new(

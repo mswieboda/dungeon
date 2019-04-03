@@ -1,8 +1,8 @@
 module Dungeon
   class Entity
     property loc : Location
-    property width : Float32
-    property height : Float32
+    property width : Int32 | Float32
+    property height : Int32 | Float32
     property collision_box : Box
     property origin : Location
     property tint : LibRay::Color
@@ -11,53 +11,20 @@ module Dungeon
 
     DRAW_COLLISION_BOXES = false
 
-    def initialize(@loc : Location, @width : Float32, @height : Float32, @collision_box : Box)
-      @tint = TINT_DEFAULT
+    def initialize(@loc : Location, @width, @height, @collision_box : Box, @tint = TINT_DEFAULT)
       @origin = Location.new(
         x: collision_box.x + collision_box.width / 2,
         y: collision_box.y + collision_box.height / 2
       )
     end
 
-    def initialize(@loc : Location, width : Int32, height : Int32, @collision_box : Box)
-      width = width.to_f32
-      height = height.to_f32
-      initialize(loc: loc, width: width, height: height, collision_box: collision_box)
-    end
-
-    def initialize(@loc : Location, @width : Int32, height : Float32, @collision_box : Box)
-      height = height.to_f32
-      initialize(loc: loc, width: width, height: height, collision_box: collision_box)
-    end
-
-    def initialize(@loc : Location, width : Float32, @height : Int32, @collision_box : Box)
-      @width = width.to_f32
-      initialize(loc: loc, width: width, height: height, collision_box: collision_box)
-    end
-
-    def initialize(@loc : Location, @width : Float32, @height : Float32)
+    def initialize(loc, width, height, tint = TINT_DEFAULT)
       collision_box = Box.new(
-        loc: Location.new(width / -2, height / -2),
+        loc: Location.new(-width / 2, -height / 2),
         width: width,
         height: height
       )
-      initialize(loc: loc, width: width, height: height, collision_box: collision_box)
-    end
-
-    def initialize(@loc : Location, width : Int32, height : Int32)
-      width = width.to_f32
-      height = height.to_f32
-      initialize(loc: loc, width: width, height: height)
-    end
-
-    def initialize(@loc : Location, width : Int32, @height : Float32)
-      width = width.to_f32
-      initialize(loc: loc, width: width, height: height)
-    end
-
-    def initialize(@loc : Location, @width : Float32, height : Int32)
-      height = height.to_f32
-      initialize(loc: loc, width: width, height: height)
+      initialize(loc, width, height, collision_box, tint)
     end
 
     def x=(x)
@@ -80,7 +47,7 @@ module Dungeon
       DRAW_COLLISION_BOXES
     end
 
-    def draw(draw_collision_box = false)
+    def draw
       raise "implement in super class"
     end
 
@@ -91,6 +58,25 @@ module Dungeon
         width: box.width,
         height: box.height,
         color: LibRay::WHITE
+      )
+
+      # draw origin
+      line_size = 5
+
+      # x line
+      LibRay.draw_line_bezier(
+        start_pos: LibRay::Vector2.new(x: x + origin.x + line_size, y: y + origin.y),
+        end_pos: LibRay::Vector2.new(x: x + origin.x - line_size, y: y + origin.y),
+        thick: 1,
+        color: LibRay::MAGENTA
+      )
+
+      # y line
+      LibRay.draw_line_bezier(
+        start_pos: LibRay::Vector2.new(x: x + origin.x, y: y + origin.y + line_size),
+        end_pos: LibRay::Vector2.new(x: x + origin.x, y: y + origin.y - line_size),
+        thick: 1,
+        color: LibRay::MAGENTA
       )
     end
 

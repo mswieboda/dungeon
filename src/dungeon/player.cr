@@ -4,15 +4,12 @@ module Dungeon
   class Player < Entity
     include DirectionTextures
 
-    getter origin
-    getter tint : LibRay::Color
     getter weapon : Weapon
     getter? dead
 
     FADED = LibRay::Color.new(r: 255, g: 255, b: 255, a: 100)
 
     PLAYER_MOVEMENT = 200
-    TINT_DEFAULT    = LibRay::WHITE
 
     HIT_FLASH_TIME     = 15
     HIT_FLASH_INTERVAL =  5
@@ -29,17 +26,22 @@ module Dungeon
 
     BUMP_DAMAGE = 5
 
-    def initialize(@loc : Location, @origin : Location, @width : Float32, @height : Float32, @collision_box : Box)
-      super(@loc, @width, @height, @collision_box)
-
+    def initialize(loc : Location, collision_box : Box)
+      # TODO: switch this to sprite sheet
       @direction = Direction::Up
       @direction_textures = [] of LibRay::Texture2D
       load_textures
 
-      @tint = TINT_DEFAULT
+      width = @direction_textures[@direction.value].width
+      height = @direction_textures[@direction.value].height
 
-      # @weapon = Weapon.new(loc: loc, direction: @direction, x_offset: width / 2, y_offset: height / 2)
-      @weapon = Weapon.new(loc: origin, direction: @direction)
+      super(loc, width, height, collision_box)
+
+      @weapon = Weapon.new(
+        loc: Location.new(x + origin.x, y + origin.y),
+        direction: @direction,
+        name: :sword
+      )
 
       @hit_flash_timer = 0
       @invincible_timer = 0

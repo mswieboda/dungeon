@@ -1,18 +1,15 @@
 module Dungeon
   class Weapon < Entity
     property direction : Direction
-    getter tint : LibRay::Color
     getter? attacking
-
-    TINT_DEFAULT = LibRay::WHITE
 
     ATTACK_TIME   = 15
     ATTACK_FRAMES =  5
 
     SWORD_DAMAGE = 5
 
-    def initialize(@loc : Location, @direction : Direction)
-      image = LibRay.load_image(File.join(__DIR__, "assets/sword-attack.png"))
+    def initialize(loc : Location, @direction : Direction, @name : Symbol)
+      image = LibRay.load_image(File.join(__DIR__, "assets/#{name}-attack.png"))
       @attack_sprite = LibRay.load_texture_from_image(image)
 
       width = @attack_sprite.width.to_f32
@@ -21,7 +18,6 @@ module Dungeon
 
       super(loc, width, height, collision_box)
 
-      @tint = TINT_DEFAULT
       @attacking = false
       @attack_time = 0
       @attack_sprites = [] of LibRay::Texture2D

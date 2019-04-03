@@ -4,59 +4,60 @@ module Dungeon
     property width : Float32
     property height : Float32
     property collision_box : Box
+    property origin : Location
+    property tint : LibRay::Color
+
+    TINT_DEFAULT = LibRay::WHITE
 
     DRAW_COLLISION_BOXES = false
 
     def initialize(@loc : Location, @width : Float32, @height : Float32, @collision_box : Box)
+      @tint = TINT_DEFAULT
+      @origin = Location.new(
+        x: collision_box.x + collision_box.width / 2,
+        y: collision_box.y + collision_box.height / 2
+      )
     end
 
     def initialize(@loc : Location, width : Int32, height : Int32, @collision_box : Box)
-      @width = width.to_f32
-      @height = height.to_f32
+      width = width.to_f32
+      height = height.to_f32
+      initialize(loc: loc, width: width, height: height, collision_box: collision_box)
     end
 
     def initialize(@loc : Location, @width : Int32, height : Float32, @collision_box : Box)
-      @height = height.to_f32
+      height = height.to_f32
+      initialize(loc: loc, width: width, height: height, collision_box: collision_box)
     end
 
     def initialize(@loc : Location, width : Float32, @height : Int32, @collision_box : Box)
       @width = width.to_f32
+      initialize(loc: loc, width: width, height: height, collision_box: collision_box)
     end
 
     def initialize(@loc : Location, @width : Float32, @height : Float32)
-      @collision_box = Box.new(
+      collision_box = Box.new(
         loc: Location.new(width / -2, height / -2),
         width: width,
         height: height
       )
+      initialize(loc: loc, width: width, height: height, collision_box: collision_box)
     end
 
     def initialize(@loc : Location, width : Int32, height : Int32)
-      @width = width.to_f32
-      @height = height.to_f32
-      @collision_box = Box.new(
-        loc: Location.new(width / -2, height / -2),
-        width: width,
-        height: height
-      )
+      width = width.to_f32
+      height = height.to_f32
+      initialize(loc: loc, width: width, height: height)
     end
 
     def initialize(@loc : Location, width : Int32, @height : Float32)
-      @width = width.to_f32
-      @collision_box = Box.new(
-        loc: Location.new(width / -2, height / -2),
-        width: width,
-        height: height
-      )
+      width = width.to_f32
+      initialize(loc: loc, width: width, height: height)
     end
 
     def initialize(@loc : Location, @width : Float32, height : Int32)
-      @height = height.to_f32
-      @collision_box = Box.new(
-        loc: Location.new(width / -2, height / -2),
-        width: width,
-        height: height
-      )
+      height = height.to_f32
+      initialize(loc: loc, width: width, height: height)
     end
 
     def x=(x)

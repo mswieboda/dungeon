@@ -19,9 +19,6 @@ module Dungeon
 
       @player = Player.new(
         loc: @player_location,
-        origin: Location.new(0, 24),
-        width: 48,
-        height: 64,
         collision_box: Box.new(
           loc: Location.new(-12, 16),
           width: 24,
@@ -39,8 +36,6 @@ module Dungeon
       # enemies
       @collidables << Enemy.new(
         loc: Location.new(300, 300),
-        width: 48,
-        height: 64,
         collision_box: Box.new(
           loc: Location.new(-12, 16),
           width: 24,

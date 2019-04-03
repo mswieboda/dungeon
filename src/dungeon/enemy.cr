@@ -4,7 +4,6 @@ module Dungeon
   class Enemy < Entity
     include DirectionTextures
 
-    getter tint : LibRay::Color
     getter? dead
 
     @path_delta : Hash(Symbol, Int32)
@@ -29,12 +28,16 @@ module Dungeon
 
     BUMP_DAMAGE = 5
 
-    def initialize(@loc : Location, @width : Float32, @height : Float32, @collision_box : Box)
-      super
-
+    def initialize(loc : Location, collision_box : Box)
+      # TODO: switch this to sprite sheet
       @direction = Direction::Up
       @direction_textures = [] of LibRay::Texture2D
       load_textures
+
+      width = @direction_textures[@direction.value].width
+      height = @direction_textures[@direction.value].height
+
+      super(loc, width, height, collision_box)
 
       @tint = TINT_DEFAULT
 

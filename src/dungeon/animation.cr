@@ -2,10 +2,10 @@ class Animation
   @sprite : LibRay::Texture2D
   @frames : Int32
   @rows : Int32
-  @row : Int32
   @fps : Int32
 
   property tint : LibRay::Color
+  property row : Int32
 
   getter width : Int32
   getter height : Int32

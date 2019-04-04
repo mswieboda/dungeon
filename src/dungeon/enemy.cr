@@ -2,7 +2,7 @@ require "./living_entity"
 
 module Dungeon
   class Enemy < LivingEntity
-    include DirectionTextures
+    @animation : Animation
 
     @path_delta : Hash(Symbol, Int32)
     @path_end_x : Float32
@@ -18,15 +18,22 @@ module Dungeon
     BUMP_DAMAGE = 5
 
     def initialize(loc : Location, collision_box : Box)
-      # TODO: switch this to sprite sheet
       @direction = Direction::Up
-      @direction_textures = [] of LibRay::Texture2D
-      load_textures
 
-      width = @direction_textures[@direction.value].width
-      height = @direction_textures[@direction.value].height
+      @animation = Animation.new(
+        asset_file_location: "player",
+        frames: 1,
+        rows: 4,
+        row: 0
+      )
+
+      width = @animation.width
+      height = @animation.height
 
       super(loc, width, height, collision_box, TINT_DEFAULT)
+
+      @animation.tint = tint
+      @animation.row = @direction.value
 
       @path_index = 0
       @path_deltas = [
@@ -53,14 +60,7 @@ module Dungeon
     end
 
     def draw
-      LibRay.draw_texture_v(
-        texture: direction_textures[direction.value],
-        position: LibRay::Vector2.new(
-          x: x - width / 2,
-          y: y - height / 2
-        ),
-        tint: @tint
-      )
+      @animation.draw(x, y)
 
       draw_collision_box if draw_collision_box?
       draw_hit_points if draw_hit_points?
@@ -151,16 +151,20 @@ module Dungeon
     def direction_x!(delta_x)
       if delta_x > 0
         @direction = Direction::Right
+        @animation.row = @direction.value
       elsif delta_x < 0
         @direction = Direction::Left
+        @animation.row = @direction.value
       end
     end
 
     def direction_y!(delta_y)
       if delta_y > 0
         @direction = Direction::Down
+        @animation.row = @direction.value
       elsif delta_y < 0
         @direction = Direction::Up
+        @animation.row = @direction.value
       end
     end
 

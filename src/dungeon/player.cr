@@ -2,7 +2,7 @@ require "./living_entity"
 
 module Dungeon
   class Player < LivingEntity
-    include DirectionTextures
+    @animation : Animation
 
     getter weapon : Weapon
 
@@ -15,15 +15,22 @@ module Dungeon
     INVINCIBLE_TINT           = FADED
 
     def initialize(loc : Location, collision_box : Box)
-      # TODO: switch this to sprite sheet
       @direction = Direction::Up
-      @direction_textures = [] of LibRay::Texture2D
-      load_textures
 
-      width = @direction_textures[@direction.value].width
-      height = @direction_textures[@direction.value].height
+      @animation = Animation.new(
+        asset_file_location: "player",
+        frames: 1,
+        rows: 4,
+        row: 0
+      )
+
+      width = @animation.width
+      height = @animation.height
 
       super(loc, width, height, collision_box)
+
+      @animation.tint = tint
+      @animation.row = @direction.value
 
       @weapon = Weapon.new(
         loc: Location.new(x + origin.x, y + origin.y),
@@ -41,14 +48,15 @@ module Dungeon
     def draw
       weapon.draw
 
-      LibRay.draw_texture_v(
-        texture: direction_textures[direction.value],
-        position: LibRay::Vector2.new(
-          x: x - width / 2,
-          y: y - height / 2
-        ),
-        tint: tint
-      )
+      @animation.draw(x, y)
+      # LibRay.draw_texture_v(
+      #   texture: direction_textures[direction.value],
+      #   position: LibRay::Vector2.new(
+      #     x: x - width / 2,
+      #     y: y - height / 2
+      #   ),
+      #   tint: tint
+      # )
 
       draw_collision_box if draw_collision_box?
       draw_hit_points if draw_hit_points?
@@ -61,7 +69,7 @@ module Dungeon
 
       movement(entities)
 
-      weapon.direction = direction
+      weapon.direction = @direction
       weapon.loc = Location.new(x + origin.x, y + origin.y)
       weapon.update(entities)
     end
@@ -76,34 +84,38 @@ module Dungeon
 
       if LibRay.key_down?(LibRay::KEY_W)
         @direction = Direction::Up
+        @animation.row = @direction.value
         @loc.y -= speed
       end
 
       if LibRay.key_down?(LibRay::KEY_A)
         @direction = Direction::Left
+        @animation.row = @direction.value
         @loc.x -= speed
       end
 
       if LibRay.key_down?(LibRay::KEY_S)
         @direction = Direction::Down
+        @animation.row = @direction.value
         @loc.y += speed
       end
 
       if LibRay.key_down?(LibRay::KEY_D)
         @direction = Direction::Right
+        @animation.row = @direction.value
         @loc.x += speed
       end
 
       enemy_bump_detections(enemies)
 
       if collisions?(collidables)
-        if direction.up?
+        if @direction.up?
           @loc.y += speed
-        elsif direction.left?
+        elsif @direction.left?
           @loc.x += speed
-        elsif direction.down?
+        elsif @direction.down?
           @loc.y -= speed
-        elsif direction.right?
+        elsif @direction.right?
           @loc.x -= speed
         end
       end

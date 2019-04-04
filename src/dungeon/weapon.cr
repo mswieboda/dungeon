@@ -74,9 +74,7 @@ module Dungeon
 
       adjust_location_and_dimensions
 
-      # TODO: cast to Enemy
-      # map(&.as(ChildClass)
-      attack_enemies(entities.select { |e| e.is_a?(Enemy) }.map(&.as(Enemy)))
+      attack_enemies(entities.select(&.is_a?(Enemy)).map(&.as(Enemy)))
     end
 
     def adjust_location_and_dimensions

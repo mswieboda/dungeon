@@ -49,14 +49,6 @@ module Dungeon
       weapon.draw
 
       @animation.draw(x, y)
-      # LibRay.draw_texture_v(
-      #   texture: direction_textures[direction.value],
-      #   position: LibRay::Vector2.new(
-      #     x: x - width / 2,
-      #     y: y - height / 2
-      #   ),
-      #   tint: tint
-      # )
 
       draw_collision_box if draw_collision_box?
       draw_hit_points if draw_hit_points?

@@ -12,9 +12,7 @@ class Animation
 
   TINT_DEFAULT = LibRay::WHITE
 
-  def initialize(asset_file_location : String, @frames = 1, @rows = 1, @row = 0, @fps = 24, @tint = TINT_DEFAULT)
-    image = LibRay.load_image(File.join(__DIR__, "assets/#{asset_file_location}.png"))
-    @sprite = LibRay.load_texture_from_image(image)
+  def initialize(@sprite : LibRay::Texture2D, @frames = 1, @rows = 1, @row = 0, @fps = 24, @tint = TINT_DEFAULT)
     @width = @sprite.width / frames
     @height = @sprite.height / rows
     @frame_t = 0_f32

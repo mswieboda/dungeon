@@ -13,7 +13,7 @@ module Dungeon
     MOVEMENT_X = 100
     MOVEMENT_Y = 100
 
-    MOVE_WITH_PATH = false
+    MOVE_WITH_PATH = true
 
     BUMP_DAMAGE = 5
 
@@ -107,6 +107,20 @@ module Dungeon
       @path_end_x += @path_delta[:dx] if @path_delta.has_key?(:dx)
       @path_end_y = y
       @path_end_y += @path_delta[:dy] if @path_delta.has_key?(:dy)
+
+      if @path_delta.has_key?(:dx)
+        if @path_delta.has_key?(:dy)
+          if @path_delta[:dx].abs > @path_delta[:dy].abs
+            direction_x!(@path_delta[:dx])
+          elsif @path_delta[:dy].abs > @path_delta[:dx].abs
+            direction_y!(@path_delta[:dy])
+          end
+        else
+          direction_x!(@path_delta[:dx])
+        end
+      else
+        direction_y!(@path_delta[:dy])
+      end
     end
 
     def path_ended?(delta_x, delta_y)
@@ -132,6 +146,22 @@ module Dungeon
       end
 
       reached_y
+    end
+
+    def direction_x!(delta_x)
+      if delta_x > 0
+        @direction = Direction::Right
+      elsif delta_x < 0
+        @direction = Direction::Left
+      end
+    end
+
+    def direction_y!(delta_y)
+      if delta_y > 0
+        @direction = Direction::Down
+      elsif delta_y < 0
+        @direction = Direction::Up
+      end
     end
 
     def bump_damage

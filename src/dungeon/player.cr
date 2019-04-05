@@ -14,6 +14,9 @@ module Dungeon
     INVINCIBLE_FLASH_INTERVAL =  8
     INVINCIBLE_TINT           = FADED
 
+    FULL_HEART_HIT_POINTS = 10
+    HALF_HEART_HIT_POINTS =  5
+
     def initialize(loc : Location, collision_box : Box, sprite : LibRay::Texture2D, weapon_sprite : LibRay::Texture2D)
       @direction = Direction::Up
 
@@ -136,6 +139,15 @@ module Dungeon
 
     def pick_up(item : Item)
       item.remove
+    end
+
+    def full_hearts
+      (@hit_points / FULL_HEART_HIT_POINTS).to_i
+    end
+
+    def half_hearts
+      leftover_hit_points = @hit_points - full_hearts * FULL_HEART_HIT_POINTS
+      (leftover_hit_points / (FULL_HEART_HIT_POINTS / 2)).to_i
     end
 
     def after_hit_flash

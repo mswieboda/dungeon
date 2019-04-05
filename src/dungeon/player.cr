@@ -14,7 +14,7 @@ module Dungeon
     INVINCIBLE_FLASH_INTERVAL = 15
     INVINCIBLE_TINT           = FADED
 
-    def initialize(loc : Location, collision_box : Box, sprite : LibRay::Texture2D)
+    def initialize(loc : Location, collision_box : Box, sprite : LibRay::Texture2D, weapon_sprite : LibRay::Texture2D)
       @direction = Direction::Up
 
       @animation = Animation.new(
@@ -35,7 +35,7 @@ module Dungeon
       @weapon = Weapon.new(
         loc: Location.new(x + origin.x, y + origin.y),
         direction: @direction,
-        name: :sword
+        sprite: weapon_sprite
       )
 
       @invincible_timer = 0

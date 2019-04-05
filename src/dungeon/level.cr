@@ -17,6 +17,7 @@ module Dungeon
 
       # load sprites
       player_sprite = LibRay.load_texture(File.join(__DIR__, "assets/player.png"))
+      sword_sprite = LibRay.load_texture(File.join(__DIR__, "assets/sword-attack.png"))
       keys_sprite = LibRay.load_texture(File.join(__DIR__, "assets/items/keys.png"))
       hearts_sprite = LibRay.load_texture(File.join(__DIR__, "assets/items/hearts.png"))
 
@@ -28,7 +29,8 @@ module Dungeon
           width: 24,
           height: 16
         ),
-        sprite: player_sprite
+        sprite: player_sprite,
+        weapon_sprite: sword_sprite
       )
 
       @entities << @player

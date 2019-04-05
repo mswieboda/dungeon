@@ -1,64 +1,55 @@
 module Dungeon
   class Weapon < Entity
-    property direction : Direction
+    getter direction : Direction
     getter? attacking
 
-    ATTACK_TIME   = 15
-    ATTACK_FRAMES =  5
+    @animation : Animation
+
+    ATTACK_TIME = 16
 
     SWORD_DAMAGE = 5
 
-    def initialize(loc : Location, @direction : Direction, @name : Symbol)
-      image = LibRay.load_image(File.join(__DIR__, "assets/#{name}-attack.png"))
-      @attack_sprite = LibRay.load_texture_from_image(image)
+    def initialize(loc : Location, @direction : Direction, sprite)
+      @animation = Animation.new(
+        sprite: sprite,
+        frames: 5,
+        rows: 2,
+        row: 0,
+        fps: ATTACK_TIME
+      )
 
-      width = @attack_sprite.width.to_f32
-      height = (@attack_sprite.height / ATTACK_FRAMES).to_f32
+      width = @animation.width
+      height = @animation.height
+
       collision_box = Box.new(loc: Location.new(0, 0), width: width, height: height)
 
       super(loc, width, height, collision_box)
 
+      @animation.tint = tint
+
       @attacking = false
       @attack_time = 0
-      @attack_sprites = [] of LibRay::Texture2D
+      # @attack_sprites = [] of LibRay::Texture2D
       @attack_x = @attack_y = @attack_rotation = 0_f32
     end
 
     def draw
       return unless attacking?
 
-      LibRay.draw_texture_pro(
-        texture: @attack_sprite,
-        source_rec: LibRay::Rectangle.new(
-          x: 0,
-          y: attack_frame * height,
-          width: width,
-          height: height
-        ),
-        dest_rec: LibRay::Rectangle.new(
-          x: x + @attack_x,
-          y: y + @attack_y,
-          width: width,
-          height: height
-        ),
-        origin: LibRay::Vector2.new(
-          x: width / 2,
-          y: height / 2
-        ),
-        rotation: @attack_rotation,
-        tint: tint
-      )
+      @animation.draw(x + @attack_x, y + @attack_y)
 
       draw_collision_box if draw_collision_box?
     end
 
-    def attack
-      @attack_time = 0
-      @attacking = true
+    def direction=(direction)
+      @direction = direction
+      adjust_location_and_dimensions
     end
 
-    def attack_frame
-      (@attack_time / (ATTACK_TIME / ATTACK_FRAMES)).to_i
+    def attack
+      @attack_time = 0
+      @animation.restart!
+      @attacking = true
     end
 
     def update(entities)
@@ -74,6 +65,8 @@ module Dungeon
 
       adjust_location_and_dimensions
 
+      @animation.update(LibRay.get_frame_time) if attacking?
+
       attack_enemies(entities.select(&.is_a?(Enemy)).map(&.as(Enemy)))
     end
 
@@ -82,23 +75,28 @@ module Dungeon
 
       if direction.up?
         @attack_y = -height / 2
+        @animation.row = 0
+        @animation.rotation = 0
       elsif direction.down?
         @attack_y = height / 2
-        @attack_rotation = 180
+        @animation.row = 0
+        @animation.rotation = 180
       elsif direction.left?
         @attack_x = -width / 2
 
         # Note: specific sword offset
         @attack_y = -height / 2
 
-        @attack_rotation = -90
+        @animation.row = 1
+        @animation.rotation = 180
       elsif direction.right?
         @attack_x = width / 2
 
         # Note: specific sword offset
         @attack_y = -height / 2
 
-        @attack_rotation = 90
+        @animation.row = 1
+        @animation.rotation = 0
       end
 
       # change collision box based on direction

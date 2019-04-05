@@ -6,6 +6,7 @@ class Animation
 
   property tint : LibRay::Color
   property row : Int32
+  property rotation : Float32
 
   getter width : Int32
   getter height : Int32
@@ -16,6 +17,7 @@ class Animation
     @width = @sprite.width / frames
     @height = @sprite.height / rows
     @frame_t = 0_f32
+    @rotation = 0_f32
   end
 
   def frame_x
@@ -45,7 +47,7 @@ class Animation
         x: width / 2,
         y: height / 2
       ),
-      rotation: 0,
+      rotation: @rotation,
       tint: tint
     )
   end
@@ -54,5 +56,9 @@ class Animation
     @frame_t += delta_t * @fps
 
     @frame_t = 0_f32 if @frame_t >= @frames
+  end
+
+  def restart!
+    @frame_t = 0_f32
   end
 end

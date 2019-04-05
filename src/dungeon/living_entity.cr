@@ -19,13 +19,21 @@ module Dungeon
 
       @hit_flash_timer = 0
 
-      @hit_points = MAX_HIT_POINTS
+      @hit_points = max_hit_points
       @death_timer = 0
       @dead = false
     end
 
     def tint!(tint : LibRay::Color)
       @tint = tint
+    end
+
+    def max_hit_points
+      MAX_HIT_POINTS
+    end
+
+    def max_hit_points?
+      @hit_points >= max_hit_points
     end
 
     def draw_hit_points
@@ -37,12 +45,12 @@ module Dungeon
       alpha = 255
 
       # green -> yellow -> red
-      if @hit_points >= MAX_HIT_POINTS / 2
-        red = (255 * MAX_HIT_POINTS / @hit_points) - 255
+      if @hit_points >= max_hit_points / 2
+        red = (255 * max_hit_points / @hit_points) - 255
         green = 255
-      elsif @hit_points < MAX_HIT_POINTS / 2
+      elsif @hit_points < max_hit_points / 2
         red = 255
-        green = 255 * @hit_points / MAX_HIT_POINTS * 2
+        green = 255 * @hit_points / max_hit_points * 2
       end
 
       color = LibRay::Color.new(r: red, g: green, b: blue, a: alpha)
@@ -109,6 +117,14 @@ module Dungeon
 
     def invincible?
       @hit_flash_timer > 0 || @death_timer > 0
+    end
+
+    def heal(hit_points)
+      @hit_points += hit_points
+
+      # TODO: some green flash animation if healed?
+
+      @hit_points = max_hit_points if @hit_points > max_hit_points
     end
 
     def removed?

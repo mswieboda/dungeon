@@ -26,7 +26,7 @@ module Dungeon
 
       # items
       @entities << Item.new(loc: Location.new(300, 150), sprite: keys_sprite, animation_rows: 4)
-      @entities << Item.new(loc: Location.new(200, 150), sprite: hearts_sprite, animation_frames: 2, animation_rows: 3, animation_row: 0, animation_fps: 5)
+      @entities << FullHeart.new(loc: Location.new(200, 150), sprite: hearts_sprite, player: @player)
 
       # enemies
       @entities << Enemy.new(

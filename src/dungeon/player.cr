@@ -14,6 +14,7 @@ module Dungeon
     INVINCIBLE_FLASH_INTERVAL =  8
     INVINCIBLE_TINT           = FADED
 
+    MAX_HIT_POINTS        = 30
     FULL_HEART_HIT_POINTS = 10
     HALF_HEART_HIT_POINTS =  5
 
@@ -42,6 +43,10 @@ module Dungeon
       )
 
       @invincible_timer = 0
+    end
+
+    def max_hit_points
+      MAX_HIT_POINTS
     end
 
     def tint!(tint : LibRay::Color)
@@ -138,7 +143,7 @@ module Dungeon
     end
 
     def pick_up(item : Item)
-      item.remove
+      item.pick_up
     end
 
     def full_hearts

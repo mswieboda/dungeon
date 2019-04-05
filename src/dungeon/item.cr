@@ -32,6 +32,10 @@ module Dungeon
       @animation.update(delta_t)
     end
 
+    def pick_up
+      remove
+    end
+
     def collidable?
       false
     end

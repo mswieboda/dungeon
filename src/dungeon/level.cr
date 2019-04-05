@@ -2,8 +2,8 @@ require "./location"
 
 module Dungeon
   class Level
-    getter width : Int32
-    getter height : Int32
+    @width : Int32
+    @height : Int32
 
     @player : Player
 

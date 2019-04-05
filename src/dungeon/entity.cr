@@ -10,7 +10,7 @@ module Dungeon
 
     TINT_DEFAULT = LibRay::WHITE
 
-    DRAW_COLLISION_BOXES = true
+    DRAW_COLLISION_BOXES = false
 
     def initialize(@loc : Location, @width, @height, @collision_box : Box, @tint = TINT_DEFAULT)
       @origin = Location.new(

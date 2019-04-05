@@ -5,11 +5,11 @@ module Dungeon
     getter tint_default : LibRay::Color
     getter? dead
 
-    HIT_FLASH_TIME     = 15
-    HIT_FLASH_INTERVAL =  5
+    HIT_FLASH_TIME     = 32
+    HIT_FLASH_INTERVAL =  8
     HIT_FLASH_TINT     = LibRay::RED
 
-    DEATH_TIME = 15
+    DEATH_TIME = 60
 
     MAX_HIT_POINTS  = 15
     DRAW_HIT_POINTS = true
@@ -22,6 +22,10 @@ module Dungeon
       @hit_points = MAX_HIT_POINTS
       @death_timer = 0
       @dead = false
+    end
+
+    def tint!(tint : LibRay::Color)
+      @tint = tint
     end
 
     def draw_hit_points
@@ -56,7 +60,7 @@ module Dungeon
       DRAW_HIT_POINTS
     end
 
-    def update(entities)
+    def update(_entities)
       hit_flash
       death_fade
     end
@@ -64,11 +68,17 @@ module Dungeon
     def hit_flash
       if @hit_flash_timer >= HIT_FLASH_TIME
         @hit_flash_timer = 0
-        @tint = tint_default
+        tint!(tint_default)
+
+        after_hit_flash
       elsif @hit_flash_timer > 0
-        @tint = (@hit_flash_timer / HIT_FLASH_INTERVAL).to_i % 2 == 1 ? tint_default : HIT_FLASH_TINT
+        tint = (@hit_flash_timer / HIT_FLASH_INTERVAL).to_i % 2 == 1 ? tint_default : HIT_FLASH_TINT
+        tint!(tint)
         @hit_flash_timer += 1
       end
+    end
+
+    def after_hit_flash
     end
 
     def death_fade
@@ -76,8 +86,9 @@ module Dungeon
         @death_timer = 0
         @dead = true
       elsif @death_timer > 0
-        @tint = tint_default
-        @tint.a = 255 - 255 * @death_timer / DEATH_TIME
+        tint = tint_default
+        tint.a = 255 - 255 * @death_timer / DEATH_TIME
+        tint!(tint)
         @death_timer += 1
       end
     end

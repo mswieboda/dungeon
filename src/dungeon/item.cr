@@ -17,7 +17,7 @@ module Dungeon
 
       super(loc, width, height, collision_box)
 
-      @animation.tint = tint
+      @animation.tint = @tint
     end
 
     def draw

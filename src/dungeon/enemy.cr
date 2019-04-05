@@ -32,7 +32,7 @@ module Dungeon
 
       super(loc, width, height, collision_box, TINT_DEFAULT)
 
-      @animation.tint = tint
+      @animation.tint = @tint
       @animation.row = @direction.value
 
       @path_index = 0
@@ -55,8 +55,9 @@ module Dungeon
       @path_end_y += @path_delta[:dy] if @path_delta.has_key?(:dy)
     end
 
-    def texture_file_name
-      "player"
+    def tint!(tint : LibRay::Color)
+      @tint = tint
+      @animation.tint = tint
     end
 
     def draw
@@ -67,7 +68,7 @@ module Dungeon
     end
 
     def update(entities)
-      super
+      super(entities)
 
       movement(entities)
     end

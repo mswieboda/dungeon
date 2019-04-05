@@ -5,7 +5,8 @@ module Dungeon
     property height : Int32 | Float32
     property collision_box : Box
     property origin : Location
-    property tint : LibRay::Color
+
+    @tint : LibRay::Color
 
     TINT_DEFAULT = LibRay::WHITE
 

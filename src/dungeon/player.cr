@@ -10,8 +10,8 @@ module Dungeon
 
     PLAYER_MOVEMENT = 200
 
-    INVINCIBLE_TIME           = 45
-    INVINCIBLE_FLASH_INTERVAL = 15
+    INVINCIBLE_TIME           = 32
+    INVINCIBLE_FLASH_INTERVAL =  8
     INVINCIBLE_TINT           = FADED
 
     def initialize(loc : Location, collision_box : Box, sprite : LibRay::Texture2D, weapon_sprite : LibRay::Texture2D)
@@ -29,7 +29,7 @@ module Dungeon
 
       super(loc, width, height, collision_box)
 
-      @animation.tint = tint
+      @animation.tint = @tint
       @animation.row = @direction.value
 
       @weapon = Weapon.new(
@@ -41,8 +41,9 @@ module Dungeon
       @invincible_timer = 0
     end
 
-    def texture_file_name
-      "player"
+    def tint!(tint : LibRay::Color)
+      @tint = tint
+      @animation.tint = tint
     end
 
     def draw
@@ -64,6 +65,8 @@ module Dungeon
       weapon.direction = @direction
       weapon.loc = Location.new(x + origin.x, y + origin.y)
       weapon.update(entities)
+
+      weapon.attack if !weapon.attacking? && !invincible? && LibRay.key_pressed?(LibRay::KEY_SPACE)
     end
 
     def movement(entities)
@@ -120,6 +123,8 @@ module Dungeon
     end
 
     def enemy_bump_detections(enemies : Array(Enemy))
+      return if invincible?
+
       enemies.each do |enemy|
         enemy_bump(enemy.bump_damage) if collision?(enemy)
       end
@@ -133,12 +138,17 @@ module Dungeon
       item.remove
     end
 
+    def after_hit_flash
+      @invincible_timer = 1
+    end
+
     def invincible_flash
       if @invincible_timer >= INVINCIBLE_TIME
         @invincible_timer = 0
-        @tint = TINT_DEFAULT
+        tint!(TINT_DEFAULT)
       elsif @invincible_timer > 0
-        @tint = (@invincible_timer / INVINCIBLE_FLASH_INTERVAL).to_i % 2 == 1 ? TINT_DEFAULT : INVINCIBLE_TINT
+        tint = (@invincible_timer / INVINCIBLE_FLASH_INTERVAL).to_i % 2 == 1 ? TINT_DEFAULT : INVINCIBLE_TINT
+        tint!(tint)
         @invincible_timer += 1
       end
     end

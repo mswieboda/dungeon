@@ -25,7 +25,7 @@ module Dungeon
 
       super(loc, width, height, collision_box)
 
-      @animation.tint = tint
+      @animation.tint = @tint
 
       @attacking = false
       @attack_time = 0
@@ -53,7 +53,6 @@ module Dungeon
     end
 
     def update(entities)
-      attack if !attacking? && LibRay.key_pressed?(LibRay::KEY_SPACE)
       return unless attacking?
 
       # timer

@@ -1,13 +1,12 @@
 module Dungeon
   class Animation
-    @sprite : Sprite
-    @frames : Int32
-    @fps : Int32
-
     property tint : LibRay::Color
     property row : Int32
     property rotation : Float32
+    property fps : Int32
 
+    getter sprite : Sprite
+    getter frames : Int32
     getter width : Int32
     getter height : Int32
 
@@ -21,20 +20,16 @@ module Dungeon
       @rotation = 0_f32
     end
 
-    def frame_x
-      @frame_t.to_i * width
-    end
-
-    def frame_y
-      @row * height
+    def frame
+      @frame_t.to_i
     end
 
     def draw(x, y)
       LibRay.draw_texture_pro(
         texture: @sprite.texture,
         source_rec: LibRay::Rectangle.new(
-          x: frame_x,
-          y: frame_y,
+          x: frame * width,
+          y: @row * height,
           width: width,
           height: height
         ),

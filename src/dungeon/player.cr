@@ -2,9 +2,8 @@ require "./living_entity"
 
 module Dungeon
   class Player < LivingEntity
+    getter bombs : Array(Bomb)
     @animation : Animation
-
-    getter weapon : Weapon
 
     FADED = LibRay::Color.new(r: 255, g: 255, b: 255, a: 100)
 
@@ -15,6 +14,8 @@ module Dungeon
     INVINCIBLE_TINT           = FADED
 
     MAX_HIT_POINTS = 30
+
+    MAX_BOMBS = 5
 
     def initialize(loc : Location, collision_box : Box)
       @direction = Direction::Up
@@ -37,11 +38,12 @@ module Dungeon
       @animation.tint = @tint
       @animation.row = @direction.value
 
-      @weapon = Weapon.new(
+      @sword = Sword.new(
         loc: Location.new(x + origin.x, y + origin.y),
-        direction: @direction,
-        sprite: Sprite.get("sword-attack")
+        direction: @direction
       )
+
+      @bombs = [] of Bomb
 
       @invincible_timer = 0
     end
@@ -56,7 +58,9 @@ module Dungeon
     end
 
     def draw
-      weapon.draw
+      @sword.draw
+
+      @bombs.each(&.draw)
 
       @animation.draw(x, y)
 
@@ -69,17 +73,35 @@ module Dungeon
     end
 
     def update(entities)
+      # living entity
       super
 
+      # flashes
       invincible_flash
 
+      # movement
       move(entities)
 
-      weapon.direction = @direction
-      weapon.loc = Location.new(x + origin.x, y + origin.y)
-      weapon.update(entities)
+      # sword
+      @sword.direction = @direction
+      @sword.loc = Location.new(x + origin.x, y + origin.y)
+      @sword.update(entities)
 
-      weapon.attack if !weapon.attacking? && !invincible? && LibRay.key_pressed?(LibRay::KEY_SPACE)
+      @sword.attack if !@sword.attacking? && !invincible? && LibRay.key_pressed?(LibRay::KEY_SPACE)
+
+      # bombs
+      @bombs.each { |bomb| bomb.update(entities) }
+      @bombs.reject! { |bomb| !bomb.active? }
+
+      if bombs? && !invincible? && LibRay.key_pressed?(LibRay::KEY_B)
+        bomb = Bomb.new(loc: Location.new(x + origin.x, y + origin.y), direction: @direction)
+        bomb.attack
+        @bombs << bomb
+      end
+    end
+
+    def bombs?
+      @bombs.size < MAX_BOMBS
     end
 
     def move(entities)

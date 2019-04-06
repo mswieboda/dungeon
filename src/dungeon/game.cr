@@ -23,6 +23,7 @@ module Dungeon
         [
           {asset_file: "player", frames: 1, rows: 4},
           {asset_file: "sword-attack", frames: 5, rows: 2},
+          {asset_file: "bomb", frames: 13, rows: 1},
           {asset_file: "items/hearts", frames: 2, rows: 3},
           {asset_file: "items/keys", frames: 1, rows: 4},
         ]

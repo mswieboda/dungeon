@@ -2,8 +2,6 @@ require "./item"
 
 module Dungeon
   class BombItem < Item
-    HIT_POINTS = 10
-
     def initialize(loc : Location, @player : Player, animation_row = 0, animation_fps = 0)
       super(loc, Sprite.get("bomb"), animation_row, animation_fps)
     end

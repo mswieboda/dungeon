@@ -3,6 +3,7 @@ require "./living_entity"
 module Dungeon
   class Player < LivingEntity
     getter bombs_left : Int32
+    getter keys_left : Int32
     getter bombs : Array(Bomb)
 
     @animation : Animation
@@ -16,8 +17,6 @@ module Dungeon
     INVINCIBLE_TINT           = FADED
 
     MAX_HIT_POINTS = 30
-
-    INITIAL_BOMBS = 5
 
     def initialize(loc : Location)
       @direction = Direction::Up
@@ -46,15 +45,16 @@ module Dungeon
       @animation.tint = @tint
       @animation.row = @direction.value
 
+      @invincible_timer = 0
+
       @sword = Sword.new(
         loc: Location.new(x + origin.x, y + origin.y),
         direction: @direction
       )
 
       @bombs = [] of Bomb
-      @bombs_left = INITIAL_BOMBS
-
-      @invincible_timer = 0
+      @bombs_left = 0
+      @keys_left = 0
     end
 
     def max_hit_points
@@ -185,6 +185,19 @@ module Dungeon
 
     def pick_up(item : Item)
       item.pick_up
+    end
+
+    def key?
+      @keys_left > 0
+    end
+
+    def add_key
+      @keys_left += 1
+    end
+
+    def use_key
+      @keys_left -= 1
+      @keys_left = 0 if @keys_left <= 0
     end
 
     def after_hit_flash

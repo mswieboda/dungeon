@@ -13,7 +13,6 @@ module Dungeon
         hit_box_padding: 5
       )
 
-      @animation.tint = LibRay::BROWN
       @opened = false
     end
 
@@ -27,7 +26,7 @@ module Dungeon
       items = [] of Item
 
       items << BombItem.new(loc: Location.new, player: @player)
-      items << Key.new(loc: Location.new)
+      items << Key.new(loc: Location.new, player: @player)
 
       # TODO: randomly arrange item locations
       # don't overlap anything else

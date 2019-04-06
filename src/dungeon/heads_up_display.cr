@@ -2,6 +2,7 @@ module Dungeon
   class HeadsUpDisplay
     @hearts_sprite : Sprite
     @bombs_text_color : LibRay::Color
+    @keys_text_color : LibRay::Color
 
     def initialize
       @hearts_sprite = Sprite.get("items/hearts")
@@ -23,6 +24,18 @@ module Dungeon
         font_size: @bombs_text_font_size,
         spacing: @bombs_text_spacing
       )
+
+      @keys_text = "B: 0"
+      @keys_text_position = LibRay::Vector2.new
+      @keys_text_font_size = 10
+      @keys_text_spacing = 3
+      @keys_text_color = LibRay::WHITE
+      @keys_text_measured = LibRay.measure_text_ex(
+        sprite_font: @default_font,
+        text: @keys_text,
+        font_size: @keys_text_font_size,
+        spacing: @keys_text_spacing
+      )
     end
 
     def update(player)
@@ -31,11 +44,13 @@ module Dungeon
       @empty_hearts = empty_hearts(player)
 
       @bombs_text = "B: #{player.bombs_left}"
+      @keys_text = "K: #{player.keys_left}"
     end
 
     def draw
       draw_hearts
       draw_bombs
+      draw_keys
     end
 
     def draw_hearts
@@ -73,6 +88,10 @@ module Dungeon
         x: hearts_x,
         y: hearts_y - @bombs_text_measured.y / 2,
       )
+      @keys_text_position = LibRay::Vector2.new(
+        x: hearts_x + @bombs_text_position.x + @bombs_text_measured.x + 15,
+        y: hearts_y - @keys_text_measured.y / 2,
+      )
     end
 
     def draw_bombs
@@ -83,6 +102,17 @@ module Dungeon
         font_size: @bombs_text_font_size,
         spacing: @bombs_text_spacing,
         color: @bombs_text_color
+      )
+    end
+
+    def draw_keys
+      LibRay.draw_text_ex(
+        sprite_font: @default_font,
+        text: @keys_text,
+        position: @keys_text_position,
+        font_size: @keys_text_font_size,
+        spacing: @keys_text_spacing,
+        color: @keys_text_color
       )
     end
 

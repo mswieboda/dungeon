@@ -8,8 +8,10 @@ module Dungeon
     SCREEN_WIDTH  = 1024
     SCREEN_HEIGHT =  768
 
+    DEBUG = false
+
     TARGET_FPS = 60
-    DRAW_FPS   = false
+    DRAW_FPS   = DEBUG
 
     GAME_OVER_TIME = 150
 

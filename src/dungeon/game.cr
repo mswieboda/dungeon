@@ -24,20 +24,14 @@ module Dungeon
           {asset_file: "player", frames: 1, rows: 4},
           {asset_file: "sword-attack", frames: 5, rows: 2},
           {asset_file: "bomb", frames: 13, rows: 1},
+          {asset_file: "items/chests", frames: 2, rows: 1},
           {asset_file: "items/hearts", frames: 2, rows: 3},
           {asset_file: "items/keys", frames: 1, rows: 4},
         ]
       )
 
       # player
-      @player = Player.new(
-        loc: Location.new(150, 150),
-        collision_box: Box.new(
-          loc: Location.new(-12, 16),
-          width: 24,
-          height: 16
-        )
-      )
+      @player = Player.new(loc: Location.new(150, 150))
 
       @hud = HeadsUpDisplay.new
 

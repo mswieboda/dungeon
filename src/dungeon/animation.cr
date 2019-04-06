@@ -12,16 +12,20 @@ module Dungeon
 
     TINT_DEFAULT = LibRay::WHITE
 
-    def initialize(@sprite : Sprite, @row = 0, @fps = 24, @tint = TINT_DEFAULT)
+    def initialize(@sprite : Sprite, @row = 0, @frame_initial = 0, @fps = 24, @tint = TINT_DEFAULT)
       @frames = @sprite.frames
       @width = @sprite.width
       @height = @sprite.height
-      @frame_t = 0_f32
+      @frame_t = 0_f32 + @frame_initial
       @rotation = 0_f32
     end
 
     def frame
       @frame_t.to_i
+    end
+
+    def frame=(frame)
+      @frame_t = frame.to_f32
     end
 
     def draw(x, y)

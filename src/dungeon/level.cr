@@ -29,6 +29,7 @@ module Dungeon
       @entities << HalfHeart.new(loc: Location.new(250, 150), player: @player)
       @entities << Key.new(loc: Location.new(300, 150))
       @entities << BombItem.new(loc: Location.new(350, 150), player: @player)
+      @entities << Chest.new(loc: Location.new(400, 150), level: self, player: @player)
 
       # enemies
       @entities << Soldier.new(loc: Location.new(300, 300))
@@ -49,6 +50,10 @@ module Dungeon
       # change order of drawing based on y coordinates
       @drawables.concat(@entities)
       @drawables.sort_by! { |d| d.y + d.height }
+    end
+
+    def add_entities(entities : Array(Entity))
+      @entities += entities
     end
   end
 end

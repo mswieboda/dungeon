@@ -13,7 +13,9 @@ module Dungeon
       width = @animation.width
       height = @animation.height
 
-      super(loc, width, height, collision_box)
+      hit_box = collision_box
+
+      super(loc, width, height, collision_box, hit_box)
 
       @animation.tint = @tint
 

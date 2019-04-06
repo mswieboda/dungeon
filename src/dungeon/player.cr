@@ -19,7 +19,7 @@ module Dungeon
 
     INITIAL_BOMBS = 5
 
-    def initialize(loc : Location, collision_box : Box)
+    def initialize(loc : Location)
       @direction = Direction::Up
 
       sprite = Sprite.get("player")
@@ -28,6 +28,12 @@ module Dungeon
 
       width = @animation.width
       height = @animation.height
+
+      collision_box = Box.new(
+        loc: Location.new(-12, 16),
+        width: 24,
+        height: 16
+      )
 
       hit_box = Box.new(
         loc: Location.new(-width / 2, -height / 2),
@@ -159,7 +165,7 @@ module Dungeon
       end
 
       items.each do |item|
-        if collision?(item)
+        if collision?(item, item.hit_box)
           pick_up(item)
         end
       end

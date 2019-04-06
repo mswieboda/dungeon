@@ -4,6 +4,7 @@ module Dungeon
     property width : Int32 | Float32
     property height : Int32 | Float32
     property collision_box : Box
+    getter hit_box : Box
     property origin : Location
 
     @tint : LibRay::Color
@@ -12,7 +13,7 @@ module Dungeon
 
     DRAW_COLLISION_BOXES = true
 
-    def initialize(@loc : Location, @width, @height, @collision_box : Box, @tint = TINT_DEFAULT)
+    def initialize(@loc : Location, @width, @height, @collision_box : Box, @hit_box : Box, @tint = TINT_DEFAULT)
       @origin = Location.new(
         x: collision_box.x + collision_box.width / 2,
         y: collision_box.y + collision_box.height / 2
@@ -25,7 +26,7 @@ module Dungeon
         width: width,
         height: height
       )
-      initialize(loc, width, height, collision_box, tint)
+      initialize(loc, width, height, collision_box, collision_box, tint)
     end
 
     def x=(x)
@@ -52,12 +53,12 @@ module Dungeon
       raise "implement in super class"
     end
 
-    def draw_collision_box(box : Box = collision_box)
+    def draw_collision_box
       LibRay.draw_rectangle_lines(
-        pos_x: x + box.x,
-        pos_y: y + box.y,
-        width: box.width,
-        height: box.height,
+        pos_x: x + collision_box.x,
+        pos_y: y + collision_box.y,
+        width: collision_box.width,
+        height: collision_box.height,
         color: LibRay::WHITE
       )
 
@@ -78,6 +79,16 @@ module Dungeon
         end_pos: LibRay::Vector2.new(x: x + origin.x, y: y + origin.y - line_size),
         thick: 1,
         color: LibRay::MAGENTA
+      )
+    end
+
+    def draw_hit_box
+      LibRay.draw_rectangle_lines(
+        pos_x: x + @hit_box.x,
+        pos_y: y + @hit_box.y,
+        width: @hit_box.width,
+        height: @hit_box.height,
+        color: LibRay::WHITE
       )
     end
 

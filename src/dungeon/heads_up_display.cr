@@ -13,7 +13,7 @@ module Dungeon
       @half_hearts = 0
       @empty_hearts = 0
 
-      @bombs_text = "B: 0"
+      @bombs_text = "B:0"
       @bombs_text_position = LibRay::Vector2.new
       @bombs_text_font_size = 10
       @bombs_text_spacing = 3
@@ -24,8 +24,12 @@ module Dungeon
         font_size: @bombs_text_font_size,
         spacing: @bombs_text_spacing
       )
+      @bombs_text_position = LibRay::Vector2.new(
+        x: 8,
+        y: 16 + @hearts_sprite.height / 2,
+      )
 
-      @keys_text = "B: 0"
+      @keys_text = "K:0"
       @keys_text_position = LibRay::Vector2.new
       @keys_text_font_size = 10
       @keys_text_spacing = 3
@@ -36,6 +40,11 @@ module Dungeon
         font_size: @keys_text_font_size,
         spacing: @keys_text_spacing
       )
+
+      @keys_text_position = LibRay::Vector2.new(
+        x: @bombs_text_position.x,
+        y: @bombs_text_position.y + @bombs_text_measured.y + 5,
+      )
     end
 
     def update(player)
@@ -43,8 +52,8 @@ module Dungeon
       @half_hearts = half_hearts(player)
       @empty_hearts = empty_hearts(player)
 
-      @bombs_text = "B: #{player.bombs_left}"
-      @keys_text = "K: #{player.keys_left}"
+      @bombs_text = "B:#{player.bombs_left}"
+      @keys_text = "K:#{player.keys_left}"
     end
 
     def draw
@@ -83,15 +92,6 @@ module Dungeon
 
         hearts_x += hearts_width + hearts_x_padding
       end
-
-      @bombs_text_position = LibRay::Vector2.new(
-        x: hearts_x,
-        y: hearts_y - @bombs_text_measured.y / 2,
-      )
-      @keys_text_position = LibRay::Vector2.new(
-        x: hearts_x + @bombs_text_position.x + @bombs_text_measured.x + 15,
-        y: hearts_y - @keys_text_measured.y / 2,
-      )
     end
 
     def draw_bombs

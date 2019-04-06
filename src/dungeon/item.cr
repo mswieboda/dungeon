@@ -1,3 +1,5 @@
+require "./entity"
+
 module Dungeon
   class Item < Entity
     @animation : Animation

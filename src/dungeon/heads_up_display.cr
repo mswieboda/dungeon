@@ -8,9 +8,6 @@ module Dungeon
     def initialize(@player, @width, @height, @hearts_sprite)
     end
 
-    def update
-    end
-
     def draw
       draw_hearts
     end
@@ -24,7 +21,7 @@ module Dungeon
 
       sprite_row = 0
 
-      @player.full_hearts.times do |heart_num|
+      full_hearts.times do |heart_num|
         draw_heart(hearts_x, hearts_y, sprite_row, hearts_width, hearts_height)
 
         hearts_x += hearts_width + hearts_x_padding
@@ -32,7 +29,15 @@ module Dungeon
 
       sprite_row = 1
 
-      @player.half_hearts.times do |heart_num|
+      half_hearts.times do |heart_num|
+        draw_heart(hearts_x, hearts_y, sprite_row, hearts_width, hearts_height)
+
+        hearts_x += hearts_width + hearts_x_padding
+      end
+
+      sprite_row = 2
+
+      empty_full_hearts.times do |heart_num|
         draw_heart(hearts_x, hearts_y, sprite_row, hearts_width, hearts_height)
 
         hearts_x += hearts_width + hearts_x_padding
@@ -61,6 +66,19 @@ module Dungeon
         rotation: 0,
         tint: LibRay::WHITE
       )
+    end
+
+    def full_hearts(hit_points = @player.hit_points)
+      (hit_points / FullHeart::HIT_POINTS).to_i
+    end
+
+    def half_hearts
+      leftover_hit_points = @player.hit_points - (full_hearts * FullHeart::HIT_POINTS).to_i
+      (leftover_hit_points / HalfHeart::HIT_POINTS).to_i
+    end
+
+    def empty_full_hearts
+      full_hearts(@player.max_hit_points - @player.hit_points)
     end
   end
 end

@@ -2,6 +2,7 @@ require "./entity"
 
 module Dungeon
   class LivingEntity < Entity
+    getter hit_points
     getter tint_default : LibRay::Color
     getter? dead
 

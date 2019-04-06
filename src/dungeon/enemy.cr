@@ -13,7 +13,7 @@ module Dungeon
     MOVEMENT_X = 100
     MOVEMENT_Y = 100
 
-    MOVE_WITH_PATH = false
+    MOVE_WITH_PATH = true
 
     BUMP_DAMAGE = 5
 

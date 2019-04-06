@@ -5,7 +5,8 @@ module Dungeon
     @height : Int32
     @hearts_sprite : LibRay::Texture2D
 
-    def initialize(@player, @width, @height, @hearts_sprite)
+    def initialize(@player, @width, @height)
+      @hearts_sprite = Sprite.load("items/hearts")
     end
 
     def draw

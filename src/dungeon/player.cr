@@ -16,11 +16,11 @@ module Dungeon
 
     MAX_HIT_POINTS = 30
 
-    def initialize(loc : Location, collision_box : Box, sprite : LibRay::Texture2D, weapon_sprite : LibRay::Texture2D)
+    def initialize(loc : Location, collision_box : Box)
       @direction = Direction::Up
 
       @animation = Animation.new(
-        sprite: sprite,
+        sprite: Sprite.load("player"),
         frames: 1,
         rows: 4,
         row: 0
@@ -37,7 +37,7 @@ module Dungeon
       @weapon = Weapon.new(
         loc: Location.new(x + origin.x, y + origin.y),
         direction: @direction,
-        sprite: weapon_sprite
+        sprite: Sprite.load("sword-attack")
       )
 
       @invincible_timer = 0

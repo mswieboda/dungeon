@@ -17,10 +17,16 @@ module Dungeon
       LibRay.init_window(SCREEN_WIDTH, SCREEN_HEIGHT, "Dungeon")
       LibRay.set_target_fps(TARGET_FPS)
 
-      player_sprite = LibRay.load_texture(File.join(__DIR__, "assets/player.png"))
-      sword_sprite = LibRay.load_texture(File.join(__DIR__, "assets/sword-attack.png"))
-
-      @hearts_sprite = LibRay.load_texture(File.join(__DIR__, "assets/items/hearts.png"))
+      # attempt to load all sprites before loading any levels or intializing
+      # any classes that use a sprite internally
+      Sprite.load(
+        [
+          "player",
+          "sword-attack",
+          "items/hearts",
+          "items/keys",
+        ]
+      )
 
       # player
       @player = Player.new(
@@ -29,21 +35,15 @@ module Dungeon
           loc: Location.new(-12, 16),
           width: 24,
           height: 16
-        ),
-        sprite: player_sprite,
-        weapon_sprite: sword_sprite
+        )
       )
 
-      @hud = HeadsUpDisplay.new(@player, SCREEN_WIDTH, SCREEN_HEIGHT, @hearts_sprite)
+      @hud = HeadsUpDisplay.new(@player, SCREEN_WIDTH, SCREEN_HEIGHT)
 
       @level = Level.new(
         player: @player,
         width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT,
-
-        # TODO: find a way to reuse sprites between levels/HUD, etc
-        enemy_sprite: player_sprite,
-        hearts_sprite: @hearts_sprite,
+        height: SCREEN_HEIGHT
       )
 
       # game over

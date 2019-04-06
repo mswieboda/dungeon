@@ -7,12 +7,12 @@ module Dungeon
 
     @player : Player
 
-    def initialize(@player, @width, @height, enemy_sprite, hearts_sprite)
+    def initialize(@player, @width, @height)
       @drawables = [] of Entity
       @entities = [] of Entity
 
       # load sprites
-      keys_sprite = LibRay.load_texture(File.join(__DIR__, "assets/items/keys.png"))
+      keys_sprite = Sprite.load("items/keys")
 
       # player
       @entities << @player
@@ -25,9 +25,9 @@ module Dungeon
       @entities << Wall.new(loc: Location.new(500, 500), width: 32, height: 100)
 
       # items
-      @entities << Item.new(loc: Location.new(300, 150), sprite: keys_sprite, animation_rows: 4)
-      @entities << FullHeart.new(loc: Location.new(200, 150), sprite: hearts_sprite, player: @player)
-      @entities << HalfHeart.new(loc: Location.new(250, 150), sprite: hearts_sprite, player: @player)
+      @entities << Key.new(loc: Location.new(300, 150))
+      @entities << FullHeart.new(loc: Location.new(200, 150), player: @player)
+      @entities << HalfHeart.new(loc: Location.new(250, 150), player: @player)
 
       # enemies
       @entities << Enemy.new(
@@ -36,8 +36,7 @@ module Dungeon
           loc: Location.new(-12, 16),
           width: 24,
           height: 16
-        ),
-        sprite: enemy_sprite
+        )
       )
     end
 

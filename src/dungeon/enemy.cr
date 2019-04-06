@@ -17,11 +17,11 @@ module Dungeon
 
     BUMP_DAMAGE = 5
 
-    def initialize(loc : Location, collision_box : Box, sprite : LibRay::Texture2D)
+    def initialize(loc : Location, collision_box : Box)
       @direction = Direction::Up
 
       @animation = Animation.new(
-        sprite: sprite,
+        sprite: Sprite.load("player"),
         frames: 1,
         rows: 4,
         row: 0

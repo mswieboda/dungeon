@@ -14,7 +14,7 @@ module Dungeon
     DEATH_TIME = 60
 
     MAX_HIT_POINTS  = 15
-    DRAW_HIT_POINTS = false
+    DRAW_HIT_POINTS = true
 
     def initialize(loc : Location, width, height, collision_box : Box, @hit_box : Box, @tint_default = TINT_DEFAULT)
       super(loc, width, height, collision_box, tint_default)

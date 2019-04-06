@@ -30,14 +30,9 @@ module Dungeon
       @entities << HalfHeart.new(loc: Location.new(250, 150), player: @player)
 
       # enemies
-      @entities << Enemy.new(
-        loc: Location.new(300, 300),
-        collision_box: Box.new(
-          loc: Location.new(-12, 16),
-          width: 24,
-          height: 16
-        )
-      )
+      @entities << Soldier.new(loc: Location.new(300, 300))
+      @entities << BasicEnemy.new(loc: Location.new(600, 600))
+      @entities << BasicEnemy.new(loc: Location.new(675, 500), direction: Direction::Down)
     end
 
     def draw

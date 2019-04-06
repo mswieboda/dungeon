@@ -73,7 +73,7 @@ module Dungeon
 
       invincible_flash
 
-      movement(entities)
+      move(entities)
 
       weapon.direction = @direction
       weapon.loc = Location.new(x + origin.x, y + origin.y)
@@ -82,7 +82,7 @@ module Dungeon
       weapon.attack if !weapon.attacking? && !invincible? && LibRay.key_pressed?(LibRay::KEY_SPACE)
     end
 
-    def movement(entities)
+    def move(entities)
       delta_t = LibRay.get_frame_time
       speed = delta_t * PLAYER_MOVEMENT
 

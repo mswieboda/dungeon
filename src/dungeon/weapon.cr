@@ -1,3 +1,5 @@
+require "./entity"
+
 module Dungeon
   class Weapon < Entity
     getter direction : Direction

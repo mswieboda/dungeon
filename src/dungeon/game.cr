@@ -8,7 +8,7 @@ module Dungeon
     SCREEN_WIDTH  = 1024
     SCREEN_HEIGHT =  768
 
-    DEBUG = false
+    DEBUG = true
 
     TARGET_FPS = 60
     DRAW_FPS   = DEBUG
@@ -26,6 +26,7 @@ module Dungeon
           {asset_file: "player", frames: 1, rows: 4},
           {asset_file: "sword-attack", frames: 5, rows: 2},
           {asset_file: "bomb", frames: 13, rows: 1},
+          {asset_file: "arrow", frames: 4, rows: 1},
           {asset_file: "items/chests", frames: 2, rows: 1},
           {asset_file: "items/hearts", frames: 2, rows: 3},
           {asset_file: "items/keys", frames: 1, rows: 4},

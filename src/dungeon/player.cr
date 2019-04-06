@@ -52,6 +52,11 @@ module Dungeon
         direction: @direction
       )
 
+      @bow = Bow.new(
+        loc: Location.new(x + origin.x, y + origin.y),
+        direction: @direction
+      )
+
       @bombs = [] of Bomb
       @bombs_left = 0
       @keys_left = 0
@@ -70,6 +75,8 @@ module Dungeon
       @sword.draw
 
       @bombs.each(&.draw)
+
+      @bow.draw
 
       @animation.draw(x, y)
 
@@ -97,6 +104,13 @@ module Dungeon
       @sword.update(entities)
 
       @sword.attack if !@sword.attacking? && !invincible? && LibRay.key_pressed?(LibRay::KEY_SPACE)
+
+      # bow and arrows
+      @bow.direction = @direction
+      @bow.loc = Location.new(x + origin.x, y + origin.y)
+      @bow.update(entities)
+
+      @bow.attack if !@bow.attacking? && !invincible? && (LibRay.key_pressed?(LibRay::KEY_LEFT_SHIFT) || LibRay.key_pressed?(LibRay::KEY_RIGHT_SHIFT))
 
       # bombs
       @bombs.each { |bomb| bomb.update(entities) }

@@ -19,12 +19,9 @@ module Dungeon
     def initialize(loc : Location, collision_box : Box)
       @direction = Direction::Up
 
-      @animation = Animation.new(
-        sprite: Sprite.load("player"),
-        frames: 1,
-        rows: 4,
-        row: 0
-      )
+      sprite = Sprite.get("player")
+
+      @animation = Animation.new(sprite)
 
       width = @animation.width
       height = @animation.height
@@ -37,7 +34,7 @@ module Dungeon
       @weapon = Weapon.new(
         loc: Location.new(x + origin.x, y + origin.y),
         direction: @direction,
-        sprite: Sprite.load("sword-attack")
+        sprite: Sprite.get("sword-attack")
       )
 
       @invincible_timer = 0

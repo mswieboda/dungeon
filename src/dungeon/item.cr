@@ -4,11 +4,9 @@ module Dungeon
   class Item < Entity
     @animation : Animation
 
-    def initialize(loc : Location, sprite : LibRay::Texture2D, animation_frames = 1, animation_rows = 1, animation_row = 0, animation_fps = 24)
+    def initialize(loc : Location, sprite : Sprite, animation_row = 0, animation_fps = 24)
       @animation = Animation.new(
         sprite: sprite,
-        frames: animation_frames,
-        rows: animation_rows,
         row: animation_row,
         fps: animation_fps
       )

@@ -12,8 +12,6 @@ module Dungeon
     def initialize(loc : Location, @direction : Direction, sprite)
       @animation = Animation.new(
         sprite: sprite,
-        frames: 5,
-        rows: 2,
         row: 0,
         fps: ATTACK_TIME
       )

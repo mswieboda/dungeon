@@ -12,7 +12,7 @@ module Dungeon
       @entities = [] of Entity
 
       # load sprites
-      keys_sprite = Sprite.load("items/keys")
+      keys_sprite = Sprite.get("items/keys")
 
       # player
       @entities << @player

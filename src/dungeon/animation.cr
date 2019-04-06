@@ -1,8 +1,7 @@
 module Dungeon
   class Animation
-    @sprite : LibRay::Texture2D
+    @sprite : Sprite
     @frames : Int32
-    @rows : Int32
     @fps : Int32
 
     property tint : LibRay::Color
@@ -14,9 +13,10 @@ module Dungeon
 
     TINT_DEFAULT = LibRay::WHITE
 
-    def initialize(@sprite : LibRay::Texture2D, @frames = 1, @rows = 1, @row = 0, @fps = 24, @tint = TINT_DEFAULT)
-      @width = @sprite.width / frames
-      @height = @sprite.height / rows
+    def initialize(@sprite : Sprite, @row = 0, @fps = 24, @tint = TINT_DEFAULT)
+      @frames = @sprite.frames
+      @width = @sprite.width
+      @height = @sprite.height
       @frame_t = 0_f32
       @rotation = 0_f32
     end
@@ -31,7 +31,7 @@ module Dungeon
 
     def draw(x, y)
       LibRay.draw_texture_pro(
-        texture: @sprite,
+        texture: @sprite.texture,
         source_rec: LibRay::Rectangle.new(
           x: frame_x,
           y: frame_y,

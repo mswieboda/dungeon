@@ -3,10 +3,10 @@ module Dungeon
     @player : Player
     @width : Int32
     @height : Int32
-    @hearts_sprite : LibRay::Texture2D
+    @hearts_sprite : Sprite
 
     def initialize(@player, @width, @height)
-      @hearts_sprite = Sprite.load("items/hearts")
+      @hearts_sprite = Sprite.get("items/hearts")
     end
 
     def draw
@@ -14,8 +14,8 @@ module Dungeon
     end
 
     def draw_hearts
-      hearts_width = @hearts_sprite.width / 2
-      hearts_height = @hearts_sprite.height / 3
+      hearts_width = @hearts_sprite.width
+      hearts_height = @hearts_sprite.height
       hearts_x = 16
       hearts_y = 16
       hearts_x_padding = -8
@@ -47,7 +47,7 @@ module Dungeon
 
     def draw_heart(x, y, sprite_row, width, height)
       LibRay.draw_texture_pro(
-        texture: @hearts_sprite,
+        texture: @hearts_sprite.texture,
         source_rec: LibRay::Rectangle.new(
           x: 0,
           y: sprite_row * height,

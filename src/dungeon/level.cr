@@ -52,7 +52,7 @@ module Dungeon
 
       # change order of drawing based on y coordinates
       @drawables.concat(@entities)
-      @drawables.sort_by!(&.y)
+      @drawables.sort_by! { |d| d.y + d.height }
     end
   end
 end

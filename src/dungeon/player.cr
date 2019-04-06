@@ -26,7 +26,13 @@ module Dungeon
       width = @animation.width
       height = @animation.height
 
-      super(loc, width, height, collision_box)
+      hit_box = Box.new(
+        loc: Location.new(-width / 2, -height / 2),
+        width: width,
+        height: height
+      )
+
+      super(loc, width, height, collision_box, hit_box)
 
       @animation.tint = @tint
       @animation.row = @direction.value
@@ -54,7 +60,11 @@ module Dungeon
 
       @animation.draw(x, y)
 
-      draw_collision_box if draw_collision_box?
+      if draw_collision_box?
+        draw_collision_box
+        draw_hit_box
+      end
+
       draw_hit_points if draw_hit_points?
     end
 

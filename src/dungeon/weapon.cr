@@ -64,7 +64,7 @@ module Dungeon
 
       @animation.update(LibRay.get_frame_time) if attacking?
 
-      attack_enemies(entities.select(&.is_a?(Enemy)).map(&.as(Enemy)))
+      attack_enemies(entities.select(&.is_a?(LivingEntity)).map(&.as(LivingEntity)))
     end
 
     def adjust_location_and_dimensions
@@ -123,9 +123,13 @@ module Dungeon
       end
     end
 
-    def attack_enemies(enemies : Array(Enemy))
+    def hit?(entity : LivingEntity)
+      collision?(entity, entity.hit_box)
+    end
+
+    def attack_enemies(enemies : Array(LivingEntity))
       enemies.each do |enemy|
-        if collision?(enemy)
+        if hit?(enemy)
           enemy.hit(SWORD_DAMAGE)
         end
       end

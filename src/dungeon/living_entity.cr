@@ -3,6 +3,7 @@ require "./entity"
 module Dungeon
   class LivingEntity < Entity
     getter hit_points
+    getter hit_box : Box
     getter tint_default : LibRay::Color
     getter? dead
 
@@ -15,7 +16,7 @@ module Dungeon
     MAX_HIT_POINTS  = 15
     DRAW_HIT_POINTS = true
 
-    def initialize(loc : Location, width, height, collision_box : Box, @tint_default = TINT_DEFAULT)
+    def initialize(loc : Location, width, height, collision_box : Box, @hit_box : Box, @tint_default = TINT_DEFAULT)
       super(loc, width, height, collision_box, tint_default)
 
       @hit_flash_timer = 0
@@ -35,6 +36,16 @@ module Dungeon
 
     def max_hit_points?
       @hit_points >= max_hit_points
+    end
+
+    def draw_hit_box
+      LibRay.draw_rectangle_lines(
+        pos_x: x + @hit_box.x,
+        pos_y: y + @hit_box.y,
+        width: @hit_box.width,
+        height: @hit_box.height,
+        color: LibRay::WHITE
+      )
     end
 
     def draw_hit_points

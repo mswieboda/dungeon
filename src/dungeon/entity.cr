@@ -10,7 +10,7 @@ module Dungeon
 
     TINT_DEFAULT = LibRay::WHITE
 
-    DRAW_COLLISION_BOXES = false
+    DRAW_COLLISION_BOXES = true
 
     def initialize(@loc : Location, @width, @height, @collision_box : Box, @tint = TINT_DEFAULT)
       @origin = Location.new(
@@ -93,11 +93,11 @@ module Dungeon
       entities.any? { |entity| collision?(entity) }
     end
 
-    def collision?(entity : Entity)
-      x + collision_box.x < entity.x + entity.collision_box.x + entity.collision_box.width &&
-        x + collision_box.x + collision_box.width > entity.x + entity.collision_box.x &&
-        y + collision_box.y < entity.y + entity.collision_box.y + entity.collision_box.height &&
-        y + collision_box.y + collision_box.height > entity.y + entity.collision_box.y
+    def collision?(entity : Entity, box : Box = entity.collision_box)
+      x + collision_box.x < entity.x + box.x + box.width &&
+        x + collision_box.x + collision_box.width > entity.x + box.x &&
+        y + collision_box.y < entity.y + box.y + box.height &&
+        y + collision_box.y + collision_box.height > entity.y + box.y
     end
 
     def removed?

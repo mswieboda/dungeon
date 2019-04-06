@@ -25,9 +25,10 @@ module Dungeon
       @entities << Wall.new(loc: Location.new(500, 500), width: 32, height: 100)
 
       # items
-      @entities << Key.new(loc: Location.new(300, 150))
       @entities << FullHeart.new(loc: Location.new(200, 150), player: @player)
       @entities << HalfHeart.new(loc: Location.new(250, 150), player: @player)
+      @entities << Key.new(loc: Location.new(300, 150))
+      @entities << BombItem.new(loc: Location.new(350, 150), player: @player)
 
       # enemies
       @entities << Soldier.new(loc: Location.new(300, 300))

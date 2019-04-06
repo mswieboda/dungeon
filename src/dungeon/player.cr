@@ -2,7 +2,9 @@ require "./living_entity"
 
 module Dungeon
   class Player < LivingEntity
+    getter bombs_left : Int32
     getter bombs : Array(Bomb)
+
     @animation : Animation
 
     FADED = LibRay::Color.new(r: 255, g: 255, b: 255, a: 100)
@@ -15,7 +17,7 @@ module Dungeon
 
     MAX_HIT_POINTS = 30
 
-    MAX_BOMBS = 5
+    INITIAL_BOMBS = 5
 
     def initialize(loc : Location, collision_box : Box)
       @direction = Direction::Up
@@ -44,6 +46,7 @@ module Dungeon
       )
 
       @bombs = [] of Bomb
+      @bombs_left = INITIAL_BOMBS
 
       @invincible_timer = 0
     end
@@ -93,15 +96,20 @@ module Dungeon
       @bombs.each { |bomb| bomb.update(entities) }
       @bombs.reject! { |bomb| !bomb.active? }
 
-      if bombs? && !invincible? && LibRay.key_pressed?(LibRay::KEY_B)
+      if bombs_left? && !invincible? && LibRay.key_pressed?(LibRay::KEY_B)
+        @bombs_left -= 1
         bomb = Bomb.new(loc: Location.new(x + origin.x, y + origin.y), direction: @direction)
         bomb.attack
         @bombs << bomb
       end
     end
 
-    def bombs?
-      @bombs.size < MAX_BOMBS
+    def add_bomb
+      @bombs_left += 1
+    end
+
+    def bombs_left?
+      bombs_left > 0
     end
 
     def move(entities)

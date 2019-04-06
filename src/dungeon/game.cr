@@ -39,7 +39,7 @@ module Dungeon
         )
       )
 
-      @hud = HeadsUpDisplay.new(@player, SCREEN_WIDTH, SCREEN_HEIGHT)
+      @hud = HeadsUpDisplay.new
 
       @level = Level.new(
         player: @player,
@@ -78,6 +78,7 @@ module Dungeon
 
     def update
       @level.update
+      @hud.update(@player)
 
       if @player.dead?
         if @game_over_timer >= GAME_OVER_TIME

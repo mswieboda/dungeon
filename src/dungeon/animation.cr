@@ -49,6 +49,8 @@ module Dungeon
     end
 
     def update(delta_t : Float32)
+      return if @fps <= 0
+
       @frame_t += delta_t * @fps
 
       @frame_t = 0_f32 if @frame_t >= @frames

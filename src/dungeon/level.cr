@@ -49,8 +49,10 @@ module Dungeon
       @entities.each { |entity| entity.update(@entities.reject(entity)) unless entity.removed? }
       @entities.reject!(&.removed?)
 
-      # change order of drawing based on y coordinates
       @drawables.concat(@entities)
+      @drawables.concat(@player.drawables)
+
+      # change order of drawing based on y coordinates
       @drawables.sort_by! { |d| d.y + d.height }
     end
 

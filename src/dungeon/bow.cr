@@ -8,7 +8,7 @@ module Dungeon
     HOLD_TIME = 0.75
 
     def initialize(loc : Location, direction : Direction)
-      sprite = Sprite.get("arrow")
+      sprite = Sprite.get("bow")
 
       collision_box = Box.new(
         loc: Location.new(-sprite.width / 2, -sprite.height / 2),
@@ -18,12 +18,14 @@ module Dungeon
 
       super(loc, direction, sprite, collision_box: collision_box)
 
-      @animation.fps = 0
+      @animation.fps = 6
 
       @arrows = [] of Arrow
-      @arrows_left = 1
+      @arrows_left = 100
 
       @hold_timer = 0_f32
+
+      @attack_x = @attack_y = 0
     end
 
     def direction=(direction)
@@ -36,7 +38,7 @@ module Dungeon
 
       return unless attacking?
 
-      @animation.draw(x, y)
+      @animation.draw(x + @attack_x, y + @attack_y)
 
       draw_collision_box if draw_collision_box?
     end
@@ -67,33 +69,42 @@ module Dungeon
         fire if LibRay.key_up?(LibRay::KEY_LEFT_SHIFT) && LibRay.key_up?(LibRay::KEY_RIGHT_SHIFT)
       elsif LibRay.key_down?(LibRay::KEY_LEFT_SHIFT) || LibRay.key_down?(LibRay::KEY_RIGHT_SHIFT)
         @hold_timer += delta_t
+        @animation.update(delta_t) unless @animation.frame + 1 >= @animation.frames
       else
-        @attacking = false
-        @hold_timer = 0
+        restart_attack
       end
-
-      @animation.update(LibRay.get_frame_time)
     end
 
     def adjust_location_and_dimensions
-      # TODO: move bow, like in Sword
+      @attack_x = @attack_y = 0
 
       if direction.up?
-        @animation.rotation = 180
-      elsif direction.down?
-        @animation.rotation = 0
-      elsif direction.left?
+        @attack_y = -height / 3
         @animation.rotation = 90
-      elsif direction.right?
+      elsif direction.down?
         @animation.rotation = -90
+      elsif direction.left?
+        @attack_x = -width / 8
+        @attack_y = -height / 4
+        @animation.rotation = 0
+      elsif direction.right?
+        @attack_x = width / 8
+        @attack_y = -height / 4
+        @animation.rotation = 180
       end
+    end
+
+    def restart_attack
+      @attacking = false
+      @hold_timer = 0
+      @animation.restart
     end
 
     def fire
       return unless arrows_left?
 
-      @attacking = false
-      @hold_timer = 0
+      restart_attack
+
       @arrows_left -= 1
 
       arrow = Arrow.new(

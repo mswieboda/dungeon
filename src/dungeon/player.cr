@@ -71,12 +71,20 @@ module Dungeon
       @animation.tint = tint
     end
 
+    def drawables
+      drawables = [] of Entity
+      drawables.concat(@bombs)
+      drawables.concat(@bow.arrows)
+      drawables
+    end
+
     def draw
       @sword.draw
-
-      @bombs.each(&.draw)
-
       @bow.draw
+
+      # @bombs.each(&.draw)
+
+      # @bow.arrows.each(&.draw)
 
       @animation.draw(x, y)
 

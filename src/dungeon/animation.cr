@@ -60,7 +60,7 @@ module Dungeon
       @frame_t = 0_f32 if @frame_t >= @frames
     end
 
-    def restart!
+    def restart
       @frame_t = 0_f32
     end
   end

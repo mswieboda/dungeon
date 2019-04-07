@@ -1,8 +1,8 @@
 module Dungeon
   class Entity
     property loc : Location
-    property width : Int32 | Float32
-    property height : Int32 | Float32
+    property width : Int32
+    property height : Int32
     property collision_box : Box
     getter hit_box : Box
     property origin : Location

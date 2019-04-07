@@ -35,7 +35,7 @@ module Dungeon
 
     def attack
       @attack_time = 0
-      @animation.restart!
+      @animation.restart
       @attacking = true
     end
 

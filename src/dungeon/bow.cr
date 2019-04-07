@@ -21,7 +21,7 @@ module Dungeon
       @animation.fps = 0
 
       @arrows = [] of Arrow
-      @arrows_left = 10
+      @arrows_left = 1
 
       @hold_timer = 0_f32
     end
@@ -49,6 +49,10 @@ module Dungeon
 
     def arrows_left?
       arrows_left > 0
+    end
+
+    def add_arrow
+      @arrows_left += 1
     end
 
     def update(entities)

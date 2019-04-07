@@ -132,6 +132,10 @@ module Dungeon
       bombs_left > 0
     end
 
+    def add_arrow
+      @bow.add_arrow
+    end
+
     def move(entities)
       delta_t = LibRay.get_frame_time
       speed = delta_t * PLAYER_MOVEMENT

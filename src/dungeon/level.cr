@@ -29,6 +29,7 @@ module Dungeon
       @entities << HalfHeart.new(loc: Location.new(250, 150), player: @player)
       @entities << Key.new(loc: Location.new(300, 150), player: @player)
       @entities << BombItem.new(loc: Location.new(350, 150), player: @player)
+      @entities << ArrowItem.new(loc: Location.new(400, 150), player: @player)
       @entities << Chest.new(loc: Location.new(400, 300), level: self, player: @player)
       @entities << KeyChest.new(loc: Location.new(400, 75), level: self, player: @player)
 

@@ -40,7 +40,22 @@ module Dungeon
 
       @animation.draw(x + @attack_x, y + @attack_y)
 
+      draw_hold_bar if draw_collision_box?
+
       draw_collision_box if draw_collision_box?
+    end
+
+    def draw_hold_bar
+      box_width = (width / 2) * (@hold_timer / HOLD_TIME)
+      color = @hold_timer >= HOLD_TIME ? LibRay::GREEN : LibRay::RED
+
+      LibRay.draw_rectangle(
+        pos_x: x - box_width / 2,
+        pos_y: y + 10,
+        width: box_width,
+        height: 5,
+        color: color
+      )
     end
 
     def attack

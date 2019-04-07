@@ -4,7 +4,8 @@ module Dungeon
   class Bow < Weapon
     property arrows_left : Int32
     getter arrows : Array(Arrow)
-    TIMER = 15
+
+    HOLD_TIME = 0.75
 
     def initialize(loc : Location, direction : Direction)
       sprite = Sprite.get("arrow")
@@ -19,9 +20,10 @@ module Dungeon
 
       @animation.fps = 0
 
-      @timer = 0
       @arrows = [] of Arrow
       @arrows_left = 10
+
+      @hold_timer = 0_f32
     end
 
     def direction=(direction)
@@ -43,7 +45,6 @@ module Dungeon
       return unless arrows_left?
 
       @attacking = true
-      @timer = 1
     end
 
     def arrows_left?
@@ -56,15 +57,18 @@ module Dungeon
 
       return unless attacking?
 
-      @timer += 1
+      delta_t = LibRay.get_frame_time
+
+      if @hold_timer >= HOLD_TIME
+        fire if LibRay.key_up?(LibRay::KEY_LEFT_SHIFT) && LibRay.key_up?(LibRay::KEY_RIGHT_SHIFT)
+      elsif LibRay.key_down?(LibRay::KEY_LEFT_SHIFT) || LibRay.key_down?(LibRay::KEY_RIGHT_SHIFT)
+        @hold_timer += delta_t
+      else
+        @attacking = false
+        @hold_timer = 0
+      end
 
       @animation.update(LibRay.get_frame_time)
-
-      if @timer >= TIMER
-        @timer = 0
-        @attacking = false
-        fire
-      end
     end
 
     def adjust_location_and_dimensions
@@ -84,7 +88,10 @@ module Dungeon
     def fire
       return unless arrows_left?
 
+      @attacking = false
+      @hold_timer = 0
       @arrows_left -= 1
+
       arrow = Arrow.new(
         loc: Location.new(x, y),
         direction: direction

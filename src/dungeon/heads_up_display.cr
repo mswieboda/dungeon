@@ -3,6 +3,7 @@ module Dungeon
     @hearts_sprite : Sprite
     @bombs_text_color : LibRay::Color
     @keys_text_color : LibRay::Color
+    @arrows_text_color : LibRay::Color
 
     def initialize
       @hearts_sprite = Sprite.get("items/hearts")
@@ -12,6 +13,22 @@ module Dungeon
       @full_hearts = 0
       @half_hearts = 0
       @empty_hearts = 0
+
+      @keys_text = "K:0"
+      @keys_text_position = LibRay::Vector2.new
+      @keys_text_font_size = 10
+      @keys_text_spacing = 3
+      @keys_text_color = LibRay::WHITE
+      @keys_text_measured = LibRay.measure_text_ex(
+        sprite_font: @default_font,
+        text: @keys_text,
+        font_size: @keys_text_font_size,
+        spacing: @keys_text_spacing
+      )
+      @keys_text_position = LibRay::Vector2.new(
+        x: 8,
+        y: 16 + @hearts_sprite.height / 2,
+      )
 
       @bombs_text = "B:0"
       @bombs_text_position = LibRay::Vector2.new
@@ -25,23 +42,22 @@ module Dungeon
         spacing: @bombs_text_spacing
       )
       @bombs_text_position = LibRay::Vector2.new(
-        x: 8,
-        y: 16 + @hearts_sprite.height / 2,
+        x: @keys_text_position.x,
+        y: @keys_text_position.y + @keys_text_measured.y + 5,
       )
 
-      @keys_text = "K:0"
-      @keys_text_position = LibRay::Vector2.new
-      @keys_text_font_size = 10
-      @keys_text_spacing = 3
-      @keys_text_color = LibRay::WHITE
-      @keys_text_measured = LibRay.measure_text_ex(
+      @arrows_text = "A:0"
+      @arrows_text_position = LibRay::Vector2.new
+      @arrows_text_font_size = 10
+      @arrows_text_spacing = 3
+      @arrows_text_color = LibRay::WHITE
+      @arrows_text_measured = LibRay.measure_text_ex(
         sprite_font: @default_font,
-        text: @keys_text,
-        font_size: @keys_text_font_size,
-        spacing: @keys_text_spacing
+        text: @arrows_text,
+        font_size: @arrows_text_font_size,
+        spacing: @arrows_text_spacing
       )
-
-      @keys_text_position = LibRay::Vector2.new(
+      @arrows_text_position = LibRay::Vector2.new(
         x: @bombs_text_position.x,
         y: @bombs_text_position.y + @bombs_text_measured.y + 5,
       )
@@ -52,14 +68,16 @@ module Dungeon
       @half_hearts = half_hearts(player)
       @empty_hearts = empty_hearts(player)
 
-      @bombs_text = "B:#{player.bombs_left}"
       @keys_text = "K:#{player.keys_left}"
+      @bombs_text = "B:#{player.bombs_left}"
+      @arrows_text = "A:#{player.arrows_left}"
     end
 
     def draw
       draw_hearts
-      draw_bombs
       draw_keys
+      draw_bombs
+      draw_arrows
     end
 
     def draw_hearts
@@ -113,6 +131,17 @@ module Dungeon
         font_size: @keys_text_font_size,
         spacing: @keys_text_spacing,
         color: @keys_text_color
+      )
+    end
+
+    def draw_arrows
+      LibRay.draw_text_ex(
+        sprite_font: @default_font,
+        text: @arrows_text,
+        position: @arrows_text_position,
+        font_size: @arrows_text_font_size,
+        spacing: @arrows_text_spacing,
+        color: @arrows_text_color
       )
     end
 

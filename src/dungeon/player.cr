@@ -132,6 +132,10 @@ module Dungeon
       bombs_left > 0
     end
 
+    def arrows_left
+      @bow.arrows_left
+    end
+
     def add_arrow
       @bow.add_arrow
     end

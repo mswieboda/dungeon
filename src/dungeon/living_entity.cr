@@ -117,7 +117,7 @@ module Dungeon
     end
 
     def invincible?
-      @hit_flash_timer > 0 || @death_timer > 0
+      @hit_flash_timer > 0 || @death_timer > 0 || dead?
     end
 
     def heal(hit_points)

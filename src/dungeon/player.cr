@@ -204,7 +204,7 @@ module Dungeon
       return if invincible?
 
       enemies.each do |enemy|
-        enemy_bump(enemy.bump_damage) if collision?(enemy)
+        enemy_bump(enemy.bump_damage) if !enemy.invincible? && collision?(enemy)
       end
     end
 

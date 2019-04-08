@@ -6,10 +6,12 @@ module Dungeon
       super(entities)
 
       move(entities)
+
+      @moving = true
     end
 
     def moving?
-      true
+      @moving
     end
 
     def move(entities)
@@ -37,7 +39,11 @@ module Dungeon
 
         move_again
       else
-        move_again if move_again?(delta)
+        if move_again?(delta)
+          move_again
+        else
+          stop_moving
+        end
       end
     end
 
@@ -57,11 +63,15 @@ module Dungeon
       # @animation.row = @direction.value
     end
 
+    def move_again?(delta : NamedTuple(x: Float32, y: Float32))
+      true
+    end
+
     def move_again
     end
 
-    def move_again?(delta : NamedTuple(x: Float32, y: Float32))
-      true
+    def stop_moving
+      @moving = false
     end
 
     def player_bump_detection(player : Player)

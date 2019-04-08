@@ -54,13 +54,7 @@ module Dungeon
     end
 
     def draw_collision_box
-      LibRay.draw_rectangle_lines(
-        pos_x: x + collision_box.x,
-        pos_y: y + collision_box.y,
-        width: collision_box.width,
-        height: collision_box.height,
-        color: LibRay::WHITE
-      )
+      draw_box(collision_box)
 
       # draw origin
       line_size = 5
@@ -83,12 +77,16 @@ module Dungeon
     end
 
     def draw_hit_box
+      draw_box(@hit_box)
+    end
+
+    def draw_box(box : Box, color = LibRay::WHITE)
       LibRay.draw_rectangle_lines(
-        pos_x: x + @hit_box.x,
-        pos_y: y + @hit_box.y,
-        width: @hit_box.width,
-        height: @hit_box.height,
-        color: LibRay::WHITE
+        pos_x: x + box.x,
+        pos_y: y + box.y,
+        width: box.width,
+        height: box.height,
+        color: color
       )
     end
 
@@ -104,11 +102,11 @@ module Dungeon
       entities.any? { |entity| collision?(entity) }
     end
 
-    def collision?(entity : Entity, box : Box = entity.collision_box)
-      x + collision_box.x < entity.x + box.x + box.width &&
-        x + collision_box.x + collision_box.width > entity.x + box.x &&
-        y + collision_box.y < entity.y + box.y + box.height &&
-        y + collision_box.y + collision_box.height > entity.y + box.y
+    def collision?(entity : Entity, other_box : Box = entity.collision_box, own_box : Box = collision_box)
+      x + own_box.x < entity.x + other_box.x + other_box.width &&
+        x + own_box.x + own_box.width > entity.x + other_box.x &&
+        y + own_box.y < entity.y + other_box.y + other_box.height &&
+        y + own_box.y + own_box.height > entity.y + other_box.y
     end
 
     def removed?

@@ -1,13 +1,12 @@
 require "./moving_enemy"
 
 module Dungeon
-  class Soldier < MovingEnemy
+  class SoldierMoving < MovingEnemy
     @path_delta : Hash(Symbol, Int32)
     @path_end_x : Float32
     @path_end_y : Float32
 
-    MOVEMENT_X = 100
-    MOVEMENT_Y = 100
+    MOVEMENT = 100
 
     MOVE_WITH_PATH = true
 
@@ -58,8 +57,8 @@ module Dungeon
     def move_delta(delta_t)
       delta_x = delta_y = 0_f32
 
-      delta_x = delta_t * MOVEMENT_X * @path_delta[:dx] / @path_delta[:dx].abs if @path_delta.has_key?(:dx)
-      delta_y = delta_t * MOVEMENT_Y * @path_delta[:dy] / @path_delta[:dy].abs if @path_delta.has_key?(:dy)
+      delta_x = delta_t * MOVEMENT * @path_delta[:dx] / @path_delta[:dx].abs if @path_delta.has_key?(:dx)
+      delta_y = delta_t * MOVEMENT * @path_delta[:dy] / @path_delta[:dy].abs if @path_delta.has_key?(:dy)
 
       {x: delta_x, y: delta_y}
     end

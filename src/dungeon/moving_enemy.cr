@@ -17,6 +17,7 @@ module Dungeon
     def move(entities)
       return unless moving?
 
+      collidables = entities.select(&.collidable?)
       player = entities.find(&.is_a?(Player))
       player = player.as(Player) if player
 
@@ -31,7 +32,7 @@ module Dungeon
 
       set_direction
 
-      if collidable? && collisions?(entities)
+      if collidable? && collisions?(collidables)
         player_bump_detection(player) if player
 
         @loc.x -= delta_x

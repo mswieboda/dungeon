@@ -147,7 +147,7 @@ module Dungeon
 
     def move(entities)
       delta_t = LibRay.get_frame_time
-      speed = delta_t * PLAYER_MOVEMENT
+      delta = delta_t * PLAYER_MOVEMENT
 
       collidables = entities.select(&.collidable?)
       enemies = entities.select(&.is_a?(Enemy)).map(&.as(Enemy))
@@ -156,39 +156,41 @@ module Dungeon
       if LibRay.key_down?(LibRay::KEY_W)
         @direction = Direction::Up
         @animation.row = @direction.value
-        @loc.y -= speed
+        @loc.y -= delta
+
+        enemy_bump_detections(enemies)
+
+        @loc.y += delta if collisions?(collidables)
       end
 
       if LibRay.key_down?(LibRay::KEY_A)
         @direction = Direction::Left
         @animation.row = @direction.value
-        @loc.x -= speed
+        @loc.x -= delta
+
+        enemy_bump_detections(enemies)
+
+        @loc.x += delta if collisions?(collidables)
       end
 
       if LibRay.key_down?(LibRay::KEY_S)
         @direction = Direction::Down
         @animation.row = @direction.value
-        @loc.y += speed
+        @loc.y += delta
+
+        enemy_bump_detections(enemies)
+
+        @loc.y -= delta if collisions?(collidables)
       end
 
       if LibRay.key_down?(LibRay::KEY_D)
         @direction = Direction::Right
         @animation.row = @direction.value
-        @loc.x += speed
-      end
+        @loc.x += delta
 
-      enemy_bump_detections(enemies)
+        enemy_bump_detections(enemies)
 
-      if collisions?(collidables)
-        if @direction.up?
-          @loc.y += speed
-        elsif @direction.left?
-          @loc.x += speed
-        elsif @direction.down?
-          @loc.y -= speed
-        elsif @direction.right?
-          @loc.x -= speed
-        end
+        @loc.x -= delta if collisions?(collidables)
       end
 
       items.each do |item|

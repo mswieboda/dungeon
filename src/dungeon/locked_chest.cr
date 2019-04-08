@@ -1,7 +1,7 @@
 require "./item"
 
 module Dungeon
-  class KeyChest < Chest
+  class LockedChest < Chest
     getter? opened
 
     def initialize(loc : Location, @level : Level, @player : Player, animation_row = 0, animation_fps = 0)
@@ -17,7 +17,7 @@ module Dungeon
     end
 
     def pick_up
-      return unless @player.key?
+      return if opened? || !@player.key?
 
       @player.use_key
 

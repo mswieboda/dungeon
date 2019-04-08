@@ -5,10 +5,13 @@ module Dungeon
     property arrows_left : Int32
     getter arrows : Array(Arrow)
 
+    @arrow_sprite : Sprite
+
     HOLD_TIME = 0.75
 
     def initialize(loc : Location, direction : Direction)
       sprite = Sprite.get("bow")
+      @arrow_sprite = Sprite.get("arrow")
 
       collision_box = Box.new(
         loc: Location.new(-sprite.width / 2, -sprite.height / 2),
@@ -18,7 +21,7 @@ module Dungeon
 
       super(loc, direction, sprite, collision_box: collision_box)
 
-      @animation.fps = 6
+      @animation.fps = (1.0 * @animation.frames / HOLD_TIME).round.to_i
 
       @arrows = [] of Arrow
       @arrows_left = 100
@@ -26,6 +29,7 @@ module Dungeon
       @hold_timer = 0_f32
 
       @attack_x = @attack_y = 0
+      @arrow_x = @arrow_y = 0_f32
     end
 
     def direction=(direction)
@@ -40,9 +44,45 @@ module Dungeon
 
       @animation.draw(x + @attack_x, y + @attack_y)
 
+      draw_arrow if @hold_timer >= HOLD_TIME
+
       draw_hold_bar if draw_collision_box?
 
       draw_collision_box if draw_collision_box?
+    end
+
+    def draw_arrow
+      arrow_rotation = 0
+
+      if direction.up?
+        arrow_rotation = 180
+      elsif direction.left?
+        arrow_rotation = 90
+      elsif direction.right?
+        arrow_rotation = -90
+      end
+
+      LibRay.draw_texture_pro(
+        texture: @arrow_sprite.texture,
+        source_rec: LibRay::Rectangle.new(
+          x: 0,
+          y: 0,
+          width: @arrow_sprite.width,
+          height: @arrow_sprite.height
+        ),
+        dest_rec: LibRay::Rectangle.new(
+          x: @arrow_x,
+          y: @arrow_y,
+          width: @arrow_sprite.width,
+          height: @arrow_sprite.height
+        ),
+        origin: LibRay::Vector2.new(
+          x: @arrow_sprite.width / 2,
+          y: @arrow_sprite.height / 2
+        ),
+        rotation: arrow_rotation,
+        tint: @tint
+      )
     end
 
     def draw_hold_bar
@@ -80,6 +120,8 @@ module Dungeon
 
       delta_t = LibRay.get_frame_time
 
+      adjust_location_and_dimensions
+
       if @hold_timer >= HOLD_TIME
         fire if LibRay.key_up?(LibRay::KEY_LEFT_SHIFT) && LibRay.key_up?(LibRay::KEY_RIGHT_SHIFT)
       elsif LibRay.key_down?(LibRay::KEY_LEFT_SHIFT) || LibRay.key_down?(LibRay::KEY_RIGHT_SHIFT)
@@ -92,20 +134,38 @@ module Dungeon
 
     def adjust_location_and_dimensions
       @attack_x = @attack_y = 0
+      offset = 4
 
       if direction.up?
         @attack_y = -height / 3
+        @attack_x = offset
         @animation.rotation = 90
       elsif direction.down?
         @animation.rotation = -90
+        @attack_x = -offset
       elsif direction.left?
         @attack_x = -width / 8
-        @attack_y = -height / 4
+        @attack_y = -height / 4 - offset
         @animation.rotation = 0
       elsif direction.right?
         @attack_x = width / 8
-        @attack_y = -height / 4
+        @attack_y = -height / 4 + offset
         @animation.rotation = 180
+      end
+
+      @arrow_x = x
+      @arrow_y = y
+
+      if direction.up?
+        @arrow_y += @attack_y - @arrow_sprite.height / 4
+      elsif direction.down?
+        @arrow_y += @attack_y + @arrow_sprite.height / 4
+      elsif direction.left?
+        @arrow_x += @attack_x - @arrow_sprite.width / 4
+        @arrow_y += @attack_y + offset
+      elsif direction.right?
+        @arrow_x += @attack_x + @arrow_sprite.width / 4
+        @arrow_y += @attack_y - offset
       end
     end
 
@@ -123,7 +183,7 @@ module Dungeon
       @arrows_left -= 1
 
       arrow = Arrow.new(
-        loc: Location.new(x, y),
+        loc: Location.new(@arrow_x, @arrow_y),
         direction: direction
       )
 

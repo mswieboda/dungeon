@@ -80,11 +80,8 @@ module Dungeon
 
     def draw
       @sword.draw
+
       @bow.draw
-
-      # @bombs.each(&.draw)
-
-      # @bow.arrows.each(&.draw)
 
       @animation.draw(x, y)
 

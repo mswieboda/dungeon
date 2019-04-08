@@ -81,6 +81,8 @@ module Dungeon
       else
         set_direction_y(@path_delta[:dy])
       end
+
+      @animation.row = @direction.value
     end
 
     def move_again?(delta : NamedTuple(x: Float32, y: Float32))
@@ -116,26 +118,6 @@ module Dungeon
       @path_end_x += @path_delta[:dx] if @path_delta.has_key?(:dx)
       @path_end_y = y
       @path_end_y += @path_delta[:dy] if @path_delta.has_key?(:dy)
-    end
-
-    def set_direction_x(delta_x)
-      if delta_x > 0_f32
-        @direction = Direction::Right
-        @animation.row = @direction.value
-      elsif delta_x < 0_f32
-        @direction = Direction::Left
-        @animation.row = @direction.value
-      end
-    end
-
-    def set_direction_y(delta_y)
-      if delta_y > 0_f32
-        @direction = Direction::Down
-        @animation.row = @direction.value
-      elsif delta_y < 0_f32
-        @direction = Direction::Up
-        @animation.row = @direction.value
-      end
     end
   end
 end

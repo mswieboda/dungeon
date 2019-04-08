@@ -57,10 +57,11 @@ module Dungeon
       @direction = Direction::Up
 
       # Note: when subclassing
-      # change the animation's direction (usually Animation#row)
-      # to match the direction set here
-      # if the spritesheet rows match:
-      # @animation.row = @direction.value
+      # easier to call:
+      # set_direction_x(delta_x)
+      # or
+      # set_direction_y(delta_y)
+      # to set direction
     end
 
     def move_again?(delta : NamedTuple(x: Float32, y: Float32))
@@ -77,6 +78,23 @@ module Dungeon
     def player_bump_detection(player : Player)
       if !invincible? && collision?(player)
         player.enemy_bump(bump_damage)
+      end
+    end
+
+    # helpers for set_direction
+    def set_direction_x(delta_x)
+      if delta_x > 0_f32
+        @direction = Direction::Right
+      elsif delta_x < 0_f32
+        @direction = Direction::Left
+      end
+    end
+
+    def set_direction_y(delta_y)
+      if delta_y > 0_f32
+        @direction = Direction::Down
+      elsif delta_y < 0_f32
+        @direction = Direction::Up
       end
     end
   end

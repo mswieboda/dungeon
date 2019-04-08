@@ -58,6 +58,31 @@ module Dungeon
       {x: delta_x, y: delta_y}
     end
 
+    def set_direction
+      dx = -(x - @target[:x])
+      dy = -(y - @target[:y])
+
+      if dx.abs > 0
+        if dy.abs > 0
+          if dx.abs > dy.abs
+            set_direction_x(dx)
+          elsif dy.abs > dx.abs
+            set_direction_y(dy)
+          else
+            # dx and dy are the same
+            # for now set direction to y
+            set_direction_y(dy)
+          end
+        else
+          set_direction_x(dx)
+        end
+      else
+        set_direction_y(dy)
+      end
+
+      @animation.row = @direction.value
+    end
+
     def move_again?(delta : NamedTuple(x: Float32, y: Float32))
       reached_x = false
       reached_y = false

@@ -118,7 +118,7 @@ module Dungeon
       @bow.attack if !@bow.attacking? && !invincible? && (LibRay.key_pressed?(LibRay::KEY_LEFT_SHIFT) || LibRay.key_pressed?(LibRay::KEY_RIGHT_SHIFT))
 
       # bombs
-      @bombs.each { |bomb| bomb.update(entities) }
+      @bombs.each { |bomb| bomb.update(entities + [self]) }
       @bombs.reject! { |bomb| !bomb.active? }
 
       if bombs_left? && !invincible? && LibRay.key_pressed?(LibRay::KEY_B)

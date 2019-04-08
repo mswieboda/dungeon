@@ -35,6 +35,8 @@ module Dungeon
 
       # enemies
       @entities << Soldier.new(loc: Location.new(300, 300))
+      @entities << Soldier.new(loc: Location.new(350, 350))
+      @entities << Soldier.new(loc: Location.new(400, 400))
       @entities << BasicEnemy.new(loc: Location.new(600, 600))
       @entities << BasicEnemy.new(loc: Location.new(675, 500), direction: Direction::Down)
     end

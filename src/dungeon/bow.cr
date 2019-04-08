@@ -7,7 +7,7 @@ module Dungeon
 
     @arrow_sprite : Sprite
 
-    HOLD_TIME = 0.75
+    HOLD_TIME = 0.5
 
     def initialize(loc : Location, direction : Direction)
       sprite = Sprite.get("bow")

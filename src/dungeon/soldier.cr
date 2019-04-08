@@ -25,16 +25,24 @@ module Dungeon
 
       @path_index = 0
       @path_deltas = [
-        # {:dx => 20},
-        # {:dy => 30},
+        {:dx => 20},
+        {:dy => 30},
         {:dx => -20, :dy => 50},
-        # {:dy => -30},
-        # {:dy => 50},
+        {:dy => -30},
+        {:dy => 50},
         {:dx => 20, :dy => 30},
         {:dx => 50, :dy => 10},
-        # {:dx => 50},
+        {:dx => 50},
         {:dx => 30, :dy => -50},
-        # {:dy => -10},
+        {:dy => -10},
+        {:dx => -30, :dy => -20},
+        {:dx => -50, :dy => -50},
+        {:dx => 50, :dy => 50},
+        {:dx => 10, :dy => 10},
+        {:dx => 5, :dy => -5},
+        {:dx => -30, :dy => -15},
+        {:dx => -30, :dy => 30},
+        {:dx => -20, :dy => 20},
       ]
       @path_delta = @path_deltas[0]
       @path_end_x = x
@@ -62,6 +70,10 @@ module Dungeon
           if @path_delta[:dx].abs > @path_delta[:dy].abs
             set_direction_x(@path_delta[:dx])
           elsif @path_delta[:dy].abs > @path_delta[:dx].abs
+            set_direction_y(@path_delta[:dy])
+          else
+            # dx and dy are the same
+            # for now set direction to y
             set_direction_y(@path_delta[:dy])
           end
         else

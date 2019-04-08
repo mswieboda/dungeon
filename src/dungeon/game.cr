@@ -74,11 +74,15 @@ module Dungeon
       close
     end
 
+    def game_over?
+      @player.dead? || @level.completed?
+    end
+
     def update
       @level.update
       @hud.update(@player)
 
-      if @player.dead?
+      if game_over?
         if @game_over_timer >= GAME_OVER_TIME
           @game_over_timer = 0
           @game_over = true

@@ -34,10 +34,10 @@ module Dungeon
       @entities << LockedChest.new(loc: Location.new(400, 75), level: self, player: @player)
 
       # enemies
-      @entities << SoldierMoving.new(loc: Location.new(300, 300))
-      @entities << SoldierMoving.new(loc: Location.new(350, 350))
-      @entities << SoldierMoving.new(loc: Location.new(400, 400))
-      @entities << BasicEnemy.new(loc: Location.new(600, 600))
+      # @entities << SoldierMoving.new(loc: Location.new(300, 300))
+      # @entities << SoldierMoving.new(loc: Location.new(350, 350))
+      # @entities << SoldierMoving.new(loc: Location.new(400, 400))
+      # @entities << BasicEnemy.new(loc: Location.new(600, 600))
       @entities << SoldierFollowing.new(loc: Location.new(675, 500), player: @player, direction: Direction::Down)
       @entities << SoldierGuarding.new(loc: Location.new(200, 500), player: @player, direction: Direction::Down)
     end
@@ -57,6 +57,12 @@ module Dungeon
 
       # change order of drawing based on y coordinates
       @drawables.sort_by! { |d| d.y + d.height }
+    end
+
+    def completed?
+      enemies = @entities.select(&.is_a?(Enemy))
+
+      enemies.empty?
     end
 
     def add_entities(entities : Array(Entity))

@@ -50,10 +50,10 @@ module Dungeon
     @@item_pool : Array(NamedTuple(chance_max: Int32, klass: String))
     @@item_pool = ItemPool.generate_item_pool(ITEM_POOL)
 
-    def initialize(loc : Location, @level : Level, @player : Player, animation_row = 0, animation_fps = 0)
+    def initialize(loc : Location, room : Room, @player : Player, animation_row = 0, animation_fps = 0)
       super(
         loc: loc,
-        level: level,
+        room: room,
         player: player,
         animation_row: animation_row,
         animation_fps: animation_fps,

@@ -50,7 +50,7 @@ module Dungeon
     @@item_pool : Array(NamedTuple(chance_max: Int32, klass: String))
     @@item_pool = ItemPool.generate_item_pool(ITEM_POOL)
 
-    def initialize(loc : Location, @level : Level, @player : Player, animation_row = 0, animation_fps = 0)
+    def initialize(loc : Location, @room : Room, @player : Player, animation_row = 0, animation_fps = 0)
       super(
         loc: loc,
         sprite: Sprite.get("items/chests"),
@@ -91,12 +91,12 @@ module Dungeon
 
       position_items(items)
 
-      @level.add_entities(items)
+      @room.add_entities(items)
     end
 
     def item_chance
       rand = rand(100)
-      item = ItemPool.get_new_item(@@item_pool, rand, @level, @player)
+      item = ItemPool.get_new_item(@@item_pool, rand, @room, @player)
     end
 
     def position_items(items)

@@ -31,15 +31,15 @@ module Dungeon
       item_pool
     end
 
-    def self.get_new_item(item_pool, rand : Int32, level : Level, player : Player)
+    def self.get_new_item(item_pool, rand : Int32, room : Room, player : Player)
       item_pool.each do |item|
         if item[:chance_max] >= rand
-          return new_item(item[:klass], level, player)
+          return new_item(item[:klass], room, player)
         end
       end
     end
 
-    def self.new_item(klass : String, level : Level, player : Player)
+    def self.new_item(klass : String, room : Room, player : Player)
       case (klass)
       when Key.to_s
         Key.new(loc: Location.new, player: player)
@@ -52,9 +52,9 @@ module Dungeon
       when ArrowItem.to_s
         ArrowItem.new(loc: Location.new, player: player)
       when Chest.to_s
-        Chest.new(loc: Location.new, level: level, player: player)
+        Chest.new(loc: Location.new, room: room, player: player)
       when LockedChest.to_s
-        LockedChest.new(loc: Location.new, level: level, player: player)
+        LockedChest.new(loc: Location.new, room: room, player: player)
       end
     end
   end

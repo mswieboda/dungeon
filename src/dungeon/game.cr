@@ -41,8 +41,8 @@ module Dungeon
 
       @level = Level.new(
         player: @player,
-        width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT
+        screenWidth: SCREEN_WIDTH,
+        screenHeight: SCREEN_HEIGHT
       )
 
       # game over
@@ -75,7 +75,7 @@ module Dungeon
     end
 
     def game_over?
-      @player.dead? || @level.left_room?
+      @player.dead? || @level.complete?
     end
 
     def update

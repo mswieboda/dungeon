@@ -1,10 +1,21 @@
 module Dungeon
   class Wall < Entity
+    TINT_DEFAULT = LibRay::RED
+
+    def initialize(loc : Location, width, height, tint = TINT_DEFAULT)
+      collision_box = Box.new(
+        loc: Location.new(0, 0),
+        width: width,
+        height: height
+      )
+      super(loc, width, height, collision_box, tint)
+    end
+
     def draw
       LibRay.draw_rectangle_v(
-        LibRay::Vector2.new(x: loc.x - width / 2, y: loc.y - height / 2),
+        LibRay::Vector2.new(x: x, y: y),
         LibRay::Vector2.new(x: width, y: height),
-        LibRay::RED
+        @tint
       )
 
       draw_collision_box if draw_collision_box?

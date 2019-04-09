@@ -20,6 +20,10 @@ module Dungeon
       )
     end
 
+    def initialize(loc, width, height, collision_box : Box, tint = TINT_DEFAULT)
+      initialize(loc, width, height, collision_box, collision_box, tint)
+    end
+
     def initialize(loc, width, height, tint = TINT_DEFAULT)
       collision_box = Box.new(
         loc: Location.new(-width / 2, -height / 2),

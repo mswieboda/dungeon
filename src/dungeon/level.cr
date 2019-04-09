@@ -2,14 +2,18 @@ require "./location"
 
 module Dungeon
   class Level
+    getter? left_room
+
     @width : Int32
     @height : Int32
-
     @player : Player
+    @door : Door
 
     def initialize(@player, @width, @height)
       @drawables = [] of Entity
       @entities = [] of Entity
+
+      @left_room = false
 
       # load sprites
       keys_sprite = Sprite.get("items/keys")
@@ -18,10 +22,19 @@ module Dungeon
       @entities << @player
 
       # walls
-      @entities << Wall.new(loc: Location.new(width / 2, 16), width: width, height: 32)
-      @entities << Wall.new(loc: Location.new(width - 16, height / 2), width: 32, height: height)
-      @entities << Wall.new(loc: Location.new(width / 2, height - 16), width: width, height: 32)
-      @entities << Wall.new(loc: Location.new(16, height / 2), width: 32, height: height)
+      @entities << Wall.new(loc: Location.new(0, 0), width: width, height: 32)
+
+      door_height = 128
+
+      @entities << Wall.new(loc: Location.new(width - 32, 0), width: 32, height: height / 4 - door_height)
+
+      @door = Door.new(loc: Location.new(width - 32, height / 4 - door_height), width: 32, height: door_height, player: @player)
+      @entities << @door
+
+      @entities << Wall.new(loc: Location.new(width - 32, height / 4), width: 32, height: height - height / 4)
+
+      @entities << Wall.new(loc: Location.new(0, height - 32), width: width, height: 32)
+      @entities << Wall.new(loc: Location.new(0, 0), width: 32, height: height)
       @entities << Wall.new(loc: Location.new(500, 500), width: 32, height: 100)
 
       # items
@@ -57,6 +70,9 @@ module Dungeon
 
       # change order of drawing based on y coordinates
       @drawables.sort_by! { |d| d.y + d.height }
+
+      @door.open if completed?
+      leave_room if @door.passed_through?
     end
 
     def completed?
@@ -67,6 +83,10 @@ module Dungeon
 
     def add_entities(entities : Array(Entity))
       @entities += entities
+    end
+
+    def leave_room
+      @left_room = true
     end
   end
 end

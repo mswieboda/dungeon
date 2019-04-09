@@ -14,17 +14,8 @@ module Dungeon
       @original_target = {:x => x, :y => y}
     end
 
-    def moving?
-      # check if player is in line of sight
-      if sees_player?
-        move_again
-        return true
-      elsif @moving
-        @target = @original_target
-        return true
-      end
-
-      false
+    def set_target
+      @target = @original_target
     end
   end
 end

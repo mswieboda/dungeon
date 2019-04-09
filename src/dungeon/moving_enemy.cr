@@ -2,12 +2,16 @@ require "./enemy"
 
 module Dungeon
   class MovingEnemy < Enemy
+    def initialize(loc : Location, sprite : Sprite, collision_box : Box, tint : LibRay::Color, direction = Direction::Up)
+      super
+
+      @moving = true
+    end
+
     def update(entities)
       super(entities)
 
       move(entities)
-
-      @moving = true
     end
 
     def moving?
@@ -40,11 +44,7 @@ module Dungeon
 
         move_again
       else
-        if move_again?(delta)
-          move_again
-        else
-          stop_moving
-        end
+        move_again if move_again?(delta)
       end
     end
 
@@ -70,10 +70,6 @@ module Dungeon
     end
 
     def move_again
-    end
-
-    def stop_moving
-      @moving = false
     end
 
     def player_bump_detection(player : Player)

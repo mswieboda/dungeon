@@ -31,15 +31,27 @@ module Dungeon
     end
 
     def moving?
+      @moving = true
+
       # check if player is in line of sight
       if sees_player?
         move_again
+
         return true
       elsif @moving
-        return true
+        set_target
+
+        return true unless at_target?
       end
 
+      @moving = false
       false
+    end
+
+    def set_target
+      # Don't need to set the target,
+      # target is the last player's seen location,
+      # move there.
     end
 
     def sees_player?
@@ -91,7 +103,7 @@ module Dungeon
         reached_x = true
       elsif delta[:x] < 0 && x <= @target[:x]
         reached_x = true
-      elsif delta[:x] == 0 && x == @target[:x]
+      elsif delta[:x] == 0 && at_target?
         reached_x = true
       end
 
@@ -101,7 +113,7 @@ module Dungeon
         reached_y = true
       elsif delta[:y] < 0 && y <= @target[:y]
         reached_y = true
-      elsif delta[:y] == 0 && y == @target[:y]
+      elsif delta[:y] == 0 && at_target?
         reached_y = true
       end
 
@@ -112,6 +124,12 @@ module Dungeon
       if sees_player?
         @target = {:x => @player.x, :y => @player.y}
       end
+    end
+
+    def at_target?
+      offset = 1
+
+      x >= @target[:x] - offset && x <= @target[:x] + offset && y >= @target[:y] - offset && y <= @target[:y] + offset
     end
 
     def draw

@@ -42,7 +42,7 @@ module Dungeon
 
       return unless attacking?
 
-      @animation.draw(x + @attack_x, y + @attack_y)
+      @animation.draw(@screen_x + @attack_x, @screen_y + @attack_y)
 
       draw_arrow if @hold_timer >= HOLD_TIME
 
@@ -71,8 +71,8 @@ module Dungeon
           height: @arrow_sprite.height
         ),
         dest_rec: LibRay::Rectangle.new(
-          x: @arrow_x,
-          y: @arrow_y,
+          x: @screen_x + @arrow_x,
+          y: @screen_y + @arrow_y,
           width: @arrow_sprite.width,
           height: @arrow_sprite.height
         ),
@@ -90,12 +90,16 @@ module Dungeon
       color = @hold_timer >= HOLD_TIME ? LibRay::GREEN : LibRay::RED
 
       LibRay.draw_rectangle(
-        pos_x: x - box_width / 2,
-        pos_y: y + 10,
+        pos_x: @screen_x - box_width / 2,
+        pos_y: @screen_y + 10,
         width: box_width,
         height: 5,
         color: color
       )
+    end
+
+    def updates_to_camera(camera_x, camera_y)
+      @arrows.each(&.update_to_camera(camera_x, camera_y))
     end
 
     def attack
@@ -153,8 +157,8 @@ module Dungeon
         @animation.rotation = 180
       end
 
-      @arrow_x = x
-      @arrow_y = y
+      @arrow_x = 0
+      @arrow_y = 0
 
       if direction.up?
         @arrow_y += @attack_y - @arrow_sprite.height / 4
@@ -183,7 +187,7 @@ module Dungeon
       @arrows_left -= 1
 
       arrow = Arrow.new(
-        loc: Location.new(@arrow_x, @arrow_y),
+        loc: Location.new(x + @arrow_x, y + @arrow_y),
         direction: direction
       )
 

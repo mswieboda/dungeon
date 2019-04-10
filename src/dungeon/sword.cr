@@ -27,7 +27,7 @@ module Dungeon
     def draw
       return unless attacking?
 
-      @animation.draw(x, y)
+      @animation.draw(@screen_x, @screen_y)
 
       draw_collision_box if draw_collision_box?
     end

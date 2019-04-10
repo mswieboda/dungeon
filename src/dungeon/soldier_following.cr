@@ -133,7 +133,7 @@ module Dungeon
     end
 
     def draw
-      @animation.draw(x, y)
+      @animation.draw(@screen_x, @screen_y)
 
       if draw_collision_box?
         draw_collision_box

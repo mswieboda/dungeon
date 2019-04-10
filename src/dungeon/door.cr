@@ -88,25 +88,25 @@ module Dungeon
       case opening_direction
       when .up?, .down?
         LibRay.draw_rectangle_v(
-          LibRay::Vector2.new(x: x, y: y),
+          LibRay::Vector2.new(x: @screen_x, y: @screen_y),
           LibRay::Vector2.new(x: DOOR_FRAME_WIDTH, y: height),
           @tint
         )
 
         LibRay.draw_rectangle_v(
-          LibRay::Vector2.new(x: x + width - DOOR_FRAME_WIDTH, y: y),
+          LibRay::Vector2.new(x: @screen_x + width - DOOR_FRAME_WIDTH, y: @screen_y),
           LibRay::Vector2.new(x: DOOR_FRAME_WIDTH, y: height),
           @tint
         )
       when .left?, .right?
         LibRay.draw_rectangle_v(
-          LibRay::Vector2.new(x: x, y: y),
+          LibRay::Vector2.new(x: @screen_x, y: @screen_y),
           LibRay::Vector2.new(x: width, y: DOOR_FRAME_WIDTH),
           @tint
         )
 
         LibRay.draw_rectangle_v(
-          LibRay::Vector2.new(x: x, y: y + height - DOOR_FRAME_WIDTH),
+          LibRay::Vector2.new(x: @screen_x, y: @screen_y + height - DOOR_FRAME_WIDTH),
           LibRay::Vector2.new(x: width, y: DOOR_FRAME_WIDTH),
           @tint
         )

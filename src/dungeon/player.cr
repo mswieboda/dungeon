@@ -85,7 +85,7 @@ module Dungeon
 
       @bow.draw
 
-      @animation.draw(x, y)
+      @animation.draw(@screen_x, @screen_y)
 
       if draw_collision_box?
         draw_collision_box
@@ -93,6 +93,12 @@ module Dungeon
       end
 
       draw_hit_points if draw_hit_points?
+    end
+
+    def updates_to_camera(camera_x, camera_y)
+      @sword.update_to_camera(camera_x, camera_y)
+      @bow.update_to_camera(camera_x, camera_y)
+      @bombs.each(&.update_to_camera(camera_x, camera_y))
     end
 
     def update(entities)

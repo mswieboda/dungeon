@@ -18,6 +18,7 @@ module Dungeon
         x: collision_box.x + collision_box.width / 2,
         y: collision_box.y + collision_box.height / 2
       )
+      @screen_x = @screen_y = 0_f32
     end
 
     def initialize(loc, width, height, collision_box : Box, tint = TINT_DEFAULT)
@@ -65,16 +66,16 @@ module Dungeon
 
       # x line
       LibRay.draw_line_bezier(
-        start_pos: LibRay::Vector2.new(x: x + origin.x + line_size, y: y + origin.y),
-        end_pos: LibRay::Vector2.new(x: x + origin.x - line_size, y: y + origin.y),
+        start_pos: LibRay::Vector2.new(x: @screen_x + origin.x + line_size, y: @screen_y + origin.y),
+        end_pos: LibRay::Vector2.new(x: @screen_x + origin.x - line_size, y: @screen_y + origin.y),
         thick: 1,
         color: LibRay::MAGENTA
       )
 
       # y line
       LibRay.draw_line_bezier(
-        start_pos: LibRay::Vector2.new(x: x + origin.x, y: y + origin.y + line_size),
-        end_pos: LibRay::Vector2.new(x: x + origin.x, y: y + origin.y - line_size),
+        start_pos: LibRay::Vector2.new(x: @screen_x + origin.x, y: @screen_y + origin.y + line_size),
+        end_pos: LibRay::Vector2.new(x: @screen_x + origin.x, y: @screen_y + origin.y - line_size),
         thick: 1,
         color: LibRay::MAGENTA
       )
@@ -86,12 +87,22 @@ module Dungeon
 
     def draw_box(box : Box, color = LibRay::WHITE)
       LibRay.draw_rectangle_lines(
-        pos_x: x + box.x,
-        pos_y: y + box.y,
+        pos_x: @screen_x + box.x,
+        pos_y: @screen_y + box.y,
         width: box.width,
         height: box.height,
         color: color
       )
+    end
+
+    def update_to_camera(camera_x, camera_y)
+      @screen_x = x - camera_x
+      @screen_y = y - camera_y
+
+      updates_to_camera(camera_x, camera_y)
+    end
+
+    def updates_to_camera(_camera_x, _camera_y)
     end
 
     def update(_entities)

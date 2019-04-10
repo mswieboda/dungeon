@@ -10,9 +10,11 @@ module Dungeon
 
       rooms = [] of Room
 
-      @room = RoomB.new(@player).as(Room)
-      rooms << @room
-      rooms << RoomA.new(@player).as(Room)
+      [RoomA, RoomB, RoomC].each do |room_class|
+        rooms << room_class.new(@player).as(Room)
+      end
+
+      @room = rooms.last.as(Room)
 
       rooms.each do |room|
         @rooms[room.class.name] = room

@@ -58,8 +58,8 @@ module Dungeon
 
       LibRay.draw_text(
         text: @hit_points.to_s,
-        pos_x: x,
-        pos_y: y - height / 1.5,
+        pos_x: @screen_x,
+        pos_y: @screen_y - height / 1.5,
         font_size: 20,
         color: color
       )

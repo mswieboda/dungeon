@@ -13,7 +13,7 @@ module Dungeon
 
     def draw
       LibRay.draw_rectangle_v(
-        LibRay::Vector2.new(x: x, y: y),
+        LibRay::Vector2.new(x: @screen_x, y: @screen_y),
         LibRay::Vector2.new(x: width, y: height),
         @tint
       )

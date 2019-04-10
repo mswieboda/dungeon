@@ -2,12 +2,6 @@ require "./enemy"
 
 module Dungeon
   class MovingEnemy < Enemy
-    def initialize(loc : Location, sprite : Sprite, collision_box : Box, tint : LibRay::Color, direction = Direction::Up)
-      super
-
-      @moving = true
-    end
-
     def update(entities)
       super(entities)
 
@@ -15,7 +9,7 @@ module Dungeon
     end
 
     def moving?
-      @moving
+      !@death_timer.active? && !dead?
     end
 
     def move(entities)

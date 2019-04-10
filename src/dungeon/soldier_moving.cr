@@ -8,8 +8,6 @@ module Dungeon
 
     MOVEMENT = 100
 
-    MOVE_WITH_PATH = true
-
     def initialize(loc : Location)
       sprite = Sprite.get("player")
       tint = LibRay::ORANGE
@@ -51,7 +49,7 @@ module Dungeon
     end
 
     def moving?
-      @path_deltas.any? && MOVE_WITH_PATH
+      !@death_timer.active? && !dead? && @path_deltas.any?
     end
 
     def move_delta(delta_t)

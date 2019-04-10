@@ -13,7 +13,7 @@ module Dungeon
     TARGET_FPS = 60
     DRAW_FPS   = DEBUG
 
-    GAME_OVER_TIME = 150
+    GAME_OVER_TIME = 1.5
 
     def initialize
       LibRay.init_window(SCREEN_WIDTH, SCREEN_HEIGHT, "Dungeon")
@@ -46,8 +46,8 @@ module Dungeon
       )
 
       # game over
-      @game_over_timer = 0
       @game_over = false
+      @game_over_timer = Timer.new(GAME_OVER_TIME)
       @game_over_text_font = LibRay.get_default_font
       @game_over_text = "GAME OVER"
       @game_over_text_font_size = 100
@@ -74,7 +74,7 @@ module Dungeon
       close
     end
 
-    def game_over?
+    def check_game_over?
       @player.dead? || @level.complete?
     end
 
@@ -82,12 +82,12 @@ module Dungeon
       @level.update
       @hud.update(@player)
 
-      if game_over?
-        if @game_over_timer >= GAME_OVER_TIME
-          @game_over_timer = 0
+      if check_game_over?
+        @game_over_timer.increase(LibRay.get_frame_time)
+
+        if @game_over_timer.done?
+          @game_over_timer.reset
           @game_over = true
-        else
-          @game_over_timer += 1
         end
       end
     end

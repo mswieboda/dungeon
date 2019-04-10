@@ -50,20 +50,19 @@ module Dungeon
     end
 
     def moving?
-      @moving = true
+      return false if @death_timer.active? || dead?
 
       # check if player is in line of sight
       if sees_player?
         move_again
 
         return true
-      elsif @moving
+      else
         set_target
 
         return true unless at_target?
       end
 
-      @moving = false
       false
     end
 

@@ -10,7 +10,7 @@ module Dungeon
     HIT_FLASH_INTERVAL =  8
     HIT_FLASH_TINT     = LibRay::RED
 
-    DEATH_TIME = 60
+    DEATH_TIME = 1
 
     MAX_HIT_POINTS  = 15
     DRAW_HIT_POINTS = Game::DEBUG
@@ -21,7 +21,7 @@ module Dungeon
       @hit_flash_timer = 0
 
       @hit_points = max_hit_points
-      @death_timer = 0
+      @death_timer = Timer.new(DEATH_TIME)
       @dead = false
     end
 
@@ -91,14 +91,14 @@ module Dungeon
     end
 
     def death_fade
-      if @death_timer >= DEATH_TIME
-        @death_timer = 0
+      if @death_timer.done?
+        @death_timer.reset
         @dead = true
-      elsif @death_timer > 0
+      elsif @death_timer.active?
         tint = tint_default
-        tint.a = 255 - 255 * @death_timer / DEATH_TIME
+        tint.a = 255 - 255 * @death_timer.percentage
         tint!(tint)
-        @death_timer += 1
+        @death_timer.increase(LibRay.get_frame_time)
       end
     end
 
@@ -113,11 +113,11 @@ module Dungeon
 
     def die
       @hit_points = 0
-      @death_timer = 1
+      @death_timer.start
     end
 
     def invincible?
-      @hit_flash_timer > 0 || @death_timer > 0 || dead?
+      @hit_flash_timer > 0 || @death_timer.active? || dead?
     end
 
     def heal(hit_points)

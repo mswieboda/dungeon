@@ -55,16 +55,16 @@ module Dungeon
       case opening_direction
       when .up?
         offset_y = height - @player.origin.y + @player.collision_box.height / 2
-        offset_x = origin.x
+        offset_x = origin.x - @player.origin.x
       when .down?
         offset_y = -@player.origin.y - @player.collision_box.height / 2
-        offset_x = origin.x
+        offset_x = origin.x - @player.origin.x
       when .left?
         offset_x = width + @player.collision_box.x + @player.collision_box.width
-        offset_y = origin.y
+        offset_y = origin.y - @player.origin.y
       when .right?
         offset_x = -@player.collision_box.x - @player.collision_box.width
-        offset_y = origin.y
+        offset_y = origin.y - @player.origin.y
       end
 
       # centered in door

@@ -31,7 +31,6 @@ module Dungeon
         next_room_name: RoomB.name,
         next_door_name: "east2"
       )
-      door.open
       @doors << door
       @entities << door
 
@@ -57,6 +56,8 @@ module Dungeon
       @entities << BasicEnemy.new(loc: Location.new(600, 600))
       @entities << SoldierFollowing.new(loc: Location.new(675, 500), player: @player, direction: Direction::Down)
       @entities << SoldierGuarding.new(loc: Location.new(200, 500), player: @player, direction: Direction::Down)
+
+      super
     end
   end
 end

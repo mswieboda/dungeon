@@ -4,6 +4,7 @@ module Dungeon
   class Room
     getter width : Int32
     getter height : Int32
+    getter? loaded
 
     @player : Player
 
@@ -11,12 +12,11 @@ module Dungeon
       @drawables = [] of Entity
       @entities = [] of Entity
       @doors = [] of Door
-
-      load_initial
     end
 
     def load_initial
       # initialize room entities, etc
+      @loaded = true
     end
 
     def draw

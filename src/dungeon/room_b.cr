@@ -29,7 +29,6 @@ module Dungeon
         next_room_name: RoomB.name,
         next_door_name: "south"
       )
-      door.open
       @doors << door
       @entities << door
 
@@ -45,7 +44,6 @@ module Dungeon
         next_room_name: RoomB.name,
         next_door_name: "north"
       )
-      door.open
       @doors << door
       @entities << door
 
@@ -59,7 +57,6 @@ module Dungeon
         next_room_name: RoomA.name,
         next_door_name: "west"
       )
-      door.open
       @doors << door
       @entities << door
 
@@ -73,7 +70,6 @@ module Dungeon
         next_room_name: RoomB.name,
         next_door_name: "east"
       )
-      door.open
       @doors << door
       @entities << door
 
@@ -85,6 +81,8 @@ module Dungeon
 
       # enemies
       @entities << BasicEnemy.new(loc: Location.new(100, 100))
+
+      super
     end
   end
 end

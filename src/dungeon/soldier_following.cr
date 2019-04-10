@@ -30,6 +30,25 @@ module Dungeon
       @target = {:x => x, :y => y}
     end
 
+    def viewable?(camera : Camera)
+      x_max = x + width / 2
+      x_min = x - width / 2
+
+      y_max = y + height / 2
+      y_min = y - height / 2
+
+      if draw_collision_box?
+        x_max = [x + width / 2, x + @line_of_site_box.x + @line_of_site_box.width].max
+        x_min = [x - width / 2, x + @line_of_site_box.x].min
+
+        y_max = [y + height / 2, y + @line_of_site_box.y + @line_of_site_box.height].max
+        y_min = [y - height / 2, y + @line_of_site_box.y].min
+      end
+
+      x_max >= camera.x && x_min <= camera.x + camera.width &&
+        y_max >= camera.y && y_min / 2 <= camera.y + camera.height
+    end
+
     def moving?
       @moving = true
 

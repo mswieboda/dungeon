@@ -95,10 +95,10 @@ module Dungeon
       draw_hit_points if draw_hit_points?
     end
 
-    def updates_to_camera(camera_x, camera_y)
-      @sword.update_to_camera(camera_x, camera_y)
-      @bow.update_to_camera(camera_x, camera_y)
-      @bombs.each(&.update_to_camera(camera_x, camera_y))
+    def updates_to_camera(camera : Camera)
+      @sword.update_to_camera(camera)
+      @bow.update_to_camera(camera)
+      @bombs.each(&.update_to_camera(camera))
     end
 
     def update(entities)

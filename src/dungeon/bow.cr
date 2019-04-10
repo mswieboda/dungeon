@@ -98,8 +98,8 @@ module Dungeon
       )
     end
 
-    def updates_to_camera(camera_x, camera_y)
-      @arrows.each(&.update_to_camera(camera_x, camera_y))
+    def updates_to_camera(camera : Camera)
+      @arrows.each(&.update_to_camera(camera))
     end
 
     def attack

@@ -9,6 +9,7 @@ module Dungeon
         height: height
       )
       super(loc, width, height, collision_box, tint)
+      @centered = false
     end
 
     def draw

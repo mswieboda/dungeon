@@ -4,8 +4,9 @@ module Dungeon
     property width : Int32
     property height : Int32
     property collision_box : Box
-    getter hit_box : Box
     property origin : Location
+    getter hit_box : Box
+    getter? centered
 
     @tint : LibRay::Color
 
@@ -19,6 +20,7 @@ module Dungeon
         y: collision_box.y + collision_box.height / 2
       )
       @screen_x = @screen_y = 0_f32
+      @centered = true
     end
 
     def initialize(loc, width, height, collision_box : Box, tint = TINT_DEFAULT)
@@ -95,14 +97,21 @@ module Dungeon
       )
     end
 
-    def update_to_camera(camera_x, camera_y)
-      @screen_x = x - camera_x
-      @screen_y = y - camera_y
+    def viewable?(camera : Camera)
+      divisor = centered? ? 2 : 1
 
-      updates_to_camera(camera_x, camera_y)
+      x + width / divisor >= camera.x && x - width / divisor <= camera.x + camera.width &&
+        y + height / divisor >= camera.y && y - height / divisor <= camera.y + camera.height
     end
 
-    def updates_to_camera(_camera_x, _camera_y)
+    def update_to_camera(camera : Camera)
+      @screen_x = x - camera.x
+      @screen_y = y - camera.y
+
+      updates_to_camera(camera)
+    end
+
+    def updates_to_camera(camera : Camera)
     end
 
     def update(_entities)

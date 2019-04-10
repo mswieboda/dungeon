@@ -2,24 +2,15 @@ require "./location"
 
 module Dungeon
   class Room
-    getter? left_room
     getter width : Int32
     getter height : Int32
 
     @player : Player
-    @door : Door
 
-    def initialize(@player, screenWidth, screenHeight)
-      @width = screenWidth
-      @height = screenHeight
-
+    def initialize(@player, @width = Game::SCREEN_WIDTH, @height = Game::SCREEN_HEIGHT)
       @drawables = [] of Entity
       @entities = [] of Entity
-
-      door_height = 128
-      @door = Door.new(loc: Location.new(width - 32, height / 4 - door_height), width: 32, height: door_height, player: @player)
-
-      @left_room = false
+      @doors = [] of Door
 
       load_initial
     end
@@ -44,8 +35,17 @@ module Dungeon
       # change order of drawing based on y coordinates
       @drawables.sort_by! { |d| d.y + d.height }
 
-      @door.open if completed?
-      leave_room if @door.passed_through?
+      @doors.each(&.open) if completed?
+    end
+
+    def room_change
+      @doors.each do |door|
+        return door.pass_through if door.passed_through?
+      end
+    end
+
+    def get_door(next_door_name : String)
+      @doors.find { |door| door.name == next_door_name }
     end
 
     def completed?
@@ -56,10 +56,6 @@ module Dungeon
 
     def add_entities(entities : Array(Entity))
       @entities += entities
-    end
-
-    def leave_room
-      @left_room = true
     end
   end
 end

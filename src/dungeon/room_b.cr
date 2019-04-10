@@ -2,27 +2,82 @@ require "./location"
 
 module Dungeon
   class RoomB < Room
+    def initialize(player)
+      width = Game::SCREEN_WIDTH
+      height = Game::SCREEN_HEIGHT
+
+      super(player, width, height)
+    end
+
     def load_initial
       # player
       @entities << @player
 
       # TODO: move player to start location, change direction, etc
 
-      # walls
-      @entities << Wall.new(loc: Location.new(0, 0), width: width, height: 32)
-
       door_height = 128
+      door_width = 32
 
-      @entities << Wall.new(loc: Location.new(width - 32, 0), width: 32, height: height / 4 - door_height)
+      # walls
+      # @entities << Wall.new(loc: Location.new(0, 0), width: width, height: 32)
 
-      @door = Door.new(loc: Location.new(width - 32, height / 4 - door_height), width: 32, height: door_height, player: @player)
-      @entities << @door
+      door = Door.new(
+        loc: Location.new(width / 2, 0),
+        player: @player,
+        opening_direction: Direction::Up,
+        name: "north",
+        next_room_name: RoomB.name,
+        next_door_name: "south"
+      )
+      door.open
+      @doors << door
+      @entities << door
 
-      @entities << Wall.new(loc: Location.new(width - 32, height / 4), width: 32, height: height - height / 4)
+      @entities << Wall.new(loc: Location.new(width - 32, 0), width: 32, height: height)
 
-      @entities << Wall.new(loc: Location.new(0, height - 32), width: width, height: 32)
-      @entities << Wall.new(loc: Location.new(0, 0), width: 32, height: height)
-      @entities << Wall.new(loc: Location.new(500, 500), width: 32, height: 100)
+      # @entities << Wall.new(loc: Location.new(0, height - 32), width: width, height: 32)
+
+      door = Door.new(
+        loc: Location.new(width / 2, height - Door::DEPTH),
+        player: @player,
+        opening_direction: Direction::Down,
+        name: "south",
+        next_room_name: RoomB.name,
+        next_door_name: "north"
+      )
+      door.open
+      @doors << door
+      @entities << door
+
+      @entities << Wall.new(loc: Location.new(0, 0), width: 32, height: height / 4 - door_height)
+
+      door = Door.new(
+        loc: Location.new(0, height / 4 - door_height),
+        player: @player,
+        opening_direction: Direction::Left,
+        name: "east",
+        next_room_name: RoomA.name,
+        next_door_name: "west"
+      )
+      door.open
+      @doors << door
+      @entities << door
+
+      @entities << Wall.new(loc: Location.new(0, height / 4), width: 32, height: height / 8)
+
+      door = Door.new(
+        loc: Location.new(0, height / 4 + height / 8),
+        player: @player,
+        name: "east2",
+        opening_direction: Direction::Left,
+        next_room_name: RoomB.name,
+        next_door_name: "east"
+      )
+      door.open
+      @doors << door
+      @entities << door
+
+      @entities << Wall.new(loc: Location.new(0, height / 4 + height / 8 + door_height), width: 32, height: height / 2 - door_height / 2)
 
       # items
       @entities << Chest.new(loc: Location.new(700, 300), room: self, player: @player)

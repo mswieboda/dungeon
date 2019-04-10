@@ -22,4 +22,8 @@ class Location
   def initialize(@x : Float32, y : Int32)
     @y = y.to_f32
   end
+
+  def to_s(io : IO)
+    io << "(x: #{x}, y: #{y})"
+  end
 end

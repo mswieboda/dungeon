@@ -6,6 +6,8 @@ module Dungeon
     getter keys_left : Int32
     getter bombs : Array(Bomb)
 
+    property direction : Direction
+
     @animation : Animation
 
     FADED = LibRay::Color.new(r: 255, g: 255, b: 255, a: 100)

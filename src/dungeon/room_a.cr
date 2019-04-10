@@ -2,6 +2,13 @@ require "./location"
 
 module Dungeon
   class RoomA < Room
+    def initialize(player)
+      width = Game::SCREEN_WIDTH
+      height = Game::SCREEN_HEIGHT
+
+      super(player, width, height)
+    end
+
     def load_initial
       # player
       @entities << @player
@@ -12,11 +19,21 @@ module Dungeon
       @entities << Wall.new(loc: Location.new(0, 0), width: width, height: 32)
 
       door_height = 128
+      door_width = 32
 
       @entities << Wall.new(loc: Location.new(width - 32, 0), width: 32, height: height / 4 - door_height)
 
-      @door = Door.new(loc: Location.new(width - 32, height / 4 - door_height), width: 32, height: door_height, player: @player)
-      @entities << @door
+      door = Door.new(
+        loc: Location.new(width - 32, height / 4 - door_height),
+        player: @player,
+        opening_direction: Direction::Right,
+        name: "west",
+        next_room_name: RoomB.name,
+        next_door_name: "east2"
+      )
+      door.open
+      @doors << door
+      @entities << door
 
       @entities << Wall.new(loc: Location.new(width - 32, height / 4), width: 32, height: height - height / 4)
 

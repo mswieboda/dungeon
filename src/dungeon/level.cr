@@ -1,17 +1,24 @@
 require "./location"
 
 module Dungeon
-  @rooms : Array(Room)
+  @rooms : Hash(String, Room)
   @room : Room
 
   class Level
     def initialize(@player : Player, screenWidth : Int32, screenHeight : Int32)
-      @rooms = [] of Room
+      @rooms = Hash(String, Room).new
 
-      @room = RoomA.new(@player, screenWidth, screenHeight).as(Room)
+      rooms = [] of Room
 
-      @rooms << @room
-      @rooms << RoomB.new(@player, screenWidth, screenHeight)
+      @room = RoomB.new(@player).as(Room)
+      rooms << @room
+      rooms << RoomA.new(@player).as(Room)
+
+      rooms.each do |room|
+        @rooms[room.class.name] = room
+      end
+
+      rooms.clear
     end
 
     def draw
@@ -21,12 +28,25 @@ module Dungeon
     def update
       @room.update
 
-      @room = @rooms[0].as(Room) if LibRay.key_pressed?(LibRay::KEY_ONE)
-      @room = @rooms[1].as(Room) if LibRay.key_pressed?(LibRay::KEY_TWO)
+      room_change = @room.room_change
+      room_change(**room_change) if room_change
+    end
+
+    def room_change(next_room_name : String, next_door_name : String)
+      room = @rooms[next_room_name]
+      door = room.get_door(next_door_name) if room
+
+      if door
+        @player.loc = door.new_player_location
+        @player.direction = door.opening_direction
+        @room = room
+      else
+        puts "#{self.class.name}#room_change room: #{next_room_name} door: #{next_door_name} not found!"
+      end
     end
 
     def complete?
-      @room.left_room?
+      false
     end
   end
 end

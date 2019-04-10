@@ -2,6 +2,7 @@ require "./weapon"
 
 module Dungeon
   class Sword < Weapon
+    property direction : Direction
     ATTACK_TIME = 16
 
     DAMAGE = 5
@@ -9,7 +10,11 @@ module Dungeon
     def initialize(loc : Location, direction : Direction)
       sprite = Sprite.get("sword-attack")
 
-      collision_box = Box.new(loc: Location.new(-sprite.width / 2, -sprite.height / 2), width: sprite.width, height: sprite.height)
+      collision_box = Box.new(
+        loc: Location.new(-sprite.width / 2, -sprite.height / 2),
+        width: sprite.width,
+        height: sprite.height
+      )
 
       super(loc, direction, sprite, collision_box: collision_box)
 
@@ -17,26 +22,46 @@ module Dungeon
       @animation.fps = ATTACK_TIME
 
       @attack_time = 0
-      @attack_x = @attack_y = 0_f32
     end
 
     def draw
       return unless attacking?
 
-      @animation.draw(x + @attack_x, y + @attack_y)
+      @animation.draw(x, y)
 
       draw_collision_box if draw_collision_box?
-    end
-
-    def direction=(direction)
-      @direction = direction
-      adjust_location_and_dimensions
     end
 
     def attack
       @attack_time = 0
       @animation.restart
       @attacking = true
+    end
+
+    def update_loc(loc, origin, collision_box, player_width, player_height)
+      offset_x = offset_y = 0
+
+      case @direction
+      when .up?
+        offset_y = origin.y - collision_box.height / 2 - height / 2
+        offset_x = origin.x
+        @animation.rotation = 0
+      when .down?
+        offset_y = origin.y + collision_box.height / 2 + height / 2
+        offset_x = origin.x
+        @animation.rotation = 180
+      when .left?
+        offset_x = -width + origin.x + collision_box.width / 2
+        offset_y = origin.y + collision_box.height / 2 - height / 2
+        @animation.rotation = -90
+      when .right?
+        offset_x = width - origin.x - collision_box.width / 2
+        offset_y = origin.y + collision_box.height / 2 - height / 2
+        @animation.rotation = 90
+      end
+
+      @loc.x = loc.x + offset_x
+      @loc.y = loc.y + offset_y
     end
 
     def update(entities)
@@ -49,67 +74,9 @@ module Dungeon
         @attacking = false
       end
 
-      adjust_location_and_dimensions
-
       @animation.update(LibRay.get_frame_time)
 
       attack(entities.select(&.is_a?(LivingEntity)).map(&.as(LivingEntity)))
-    end
-
-    def adjust_location_and_dimensions
-      @attack_x = @attack_y = 0
-
-      if direction.up?
-        @attack_y = -height / 2
-        @animation.row = 0
-        @animation.rotation = 0
-      elsif direction.down?
-        @attack_y = height / 2
-        @animation.row = 0
-        @animation.rotation = 180
-      elsif direction.left?
-        @attack_x = -width / 2
-
-        # Note: specific sword offset
-        @attack_y = -height / 2
-
-        @animation.row = 1
-        @animation.rotation = 180
-      elsif direction.right?
-        @attack_x = width / 2
-
-        # Note: specific sword offset
-        @attack_y = -height / 2
-
-        @animation.row = 1
-        @animation.rotation = 0
-      end
-
-      # change collision box based on direction
-      box_x = 0
-      box_y = 0
-      box_width = 0
-      box_height = 0
-
-      if direction.up? || direction.down?
-        box_x = @attack_x - width / 2
-        box_y = @attack_y - (height / 2)
-        box_width = width
-        box_height = height
-      elsif direction.left? || direction.right?
-        box_x = @attack_x - (height / 2)
-        box_y = @attack_y - width / 2
-        box_width = height
-        box_height = width
-      end
-
-      # change weapon loc, and collision_box
-      @collision_box.tap do |box|
-        box.x = box_x.to_f32
-        box.y = box_y.to_f32
-        box.width = box_width.to_f32
-        box.height = box_height.to_f32
-      end
     end
   end
 end

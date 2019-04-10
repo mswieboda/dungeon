@@ -107,7 +107,7 @@ module Dungeon
 
       # sword
       @sword.direction = @direction
-      @sword.loc = Location.new(x + origin.x, y + origin.y)
+      @sword.update_loc(loc, origin, collision_box, width, height)
       @sword.update(entities)
 
       @sword.attack if !@sword.attacking? && !invincible? && LibRay.key_pressed?(LibRay::KEY_SPACE)

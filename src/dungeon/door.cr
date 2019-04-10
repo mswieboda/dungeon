@@ -60,10 +60,10 @@ module Dungeon
         offset_y = -@player.origin.y - @player.collision_box.height / 2
         offset_x = origin.x - @player.origin.x
       when .left?
-        offset_x = width + @player.collision_box.x + @player.collision_box.width
+        offset_x = width - @player.origin.x + @player.collision_box.width / 2
         offset_y = origin.y - @player.origin.y
       when .right?
-        offset_x = -@player.collision_box.x - @player.collision_box.width
+        offset_x = -@player.origin.x - @player.collision_box.width / 2
         offset_y = origin.y - @player.origin.y
       end
 

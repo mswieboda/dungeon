@@ -24,7 +24,7 @@ module Dungeon
       Sprite.load(
         [
           {asset_file: "player", frames: 1, rows: 4},
-          {asset_file: "sword-attack", frames: 5, rows: 2},
+          {asset_file: "sword-attack", frames: 5, rows: 1},
           {asset_file: "bomb", frames: 13, rows: 1},
           {asset_file: "bow", frames: 5, rows: 1},
           {asset_file: "arrow", frames: 4, rows: 1},

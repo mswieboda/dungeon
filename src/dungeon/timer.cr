@@ -1,13 +1,38 @@
 module Dungeon
   class Timer
-    def self.time(&block)
-      time_start = Time.now
+    getter time
+    getter? active
 
-      yield
+    def initialize(@length : Float64 | Float32 | Int32)
+      @active = false
+      @time = 0_f32
+    end
 
-      time_end = Time.now
+    def start
+      @active = true
+    end
 
-      time_end - time_start
+    def done?
+      active? && @time >= @length
+    end
+
+    def reset
+      @active = false
+      @time = 0_f32
+    end
+
+    def restart
+      reset
+      start
+    end
+
+    def increase(delta_t : Float32)
+      start unless active?
+      @time += delta_t
+    end
+
+    def percentage
+      @time / @length
     end
   end
 end

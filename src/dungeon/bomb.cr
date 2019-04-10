@@ -5,7 +5,7 @@ module Dungeon
     getter? active
     @bomb_done_frame : Int32
 
-    TIMER = 60
+    TIMER = 1
 
     def initialize(loc : Location, direction : Direction)
       sprite = Sprite.get("bomb")
@@ -21,7 +21,7 @@ module Dungeon
       @bomb_done_frame = @animation.frames
 
       @active = false
-      @timer = 0
+      @timer = Timer.new(TIMER)
     end
 
     def draw
@@ -31,17 +31,19 @@ module Dungeon
 
     def attack
       @active = true
-      @timer = 1
+      @timer.restart
     end
 
     def update(entities)
       return unless active?
 
-      unless attacking?
-        @timer += 1
+      delta_t = LibRay.get_frame_time
 
-        if @timer > TIMER
-          @timer = 0
+      unless attacking?
+        @timer.increase(delta_t)
+
+        if @timer.done?
+          @timer.reset
           @attacking = true
         end
 

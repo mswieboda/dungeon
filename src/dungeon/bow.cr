@@ -26,7 +26,7 @@ module Dungeon
       @arrows = [] of Arrow
       @arrows_left = 100
 
-      @hold_timer = 0_f32
+      @hold_timer = Timer.new(HOLD_TIME)
 
       @attack_x = @attack_y = 0
       @arrow_x = @arrow_y = 0_f32
@@ -44,7 +44,7 @@ module Dungeon
 
       @animation.draw(@screen_x + @attack_x, @screen_y + @attack_y)
 
-      draw_arrow if @hold_timer >= HOLD_TIME
+      draw_arrow if @hold_timer.done?
 
       draw_hold_bar if draw_collision_box?
 
@@ -86,8 +86,8 @@ module Dungeon
     end
 
     def draw_hold_bar
-      box_width = (width / 2) * (@hold_timer / HOLD_TIME)
-      color = @hold_timer >= HOLD_TIME ? LibRay::GREEN : LibRay::RED
+      box_width = (width / 2) * @hold_timer.percentage
+      color = @hold_timer.done? ? LibRay::GREEN : LibRay::RED
 
       LibRay.draw_rectangle(
         pos_x: @screen_x - box_width / 2,
@@ -126,10 +126,10 @@ module Dungeon
 
       adjust_location_and_dimensions
 
-      if @hold_timer >= HOLD_TIME
+      if @hold_timer.done?
         fire if LibRay.key_up?(LibRay::KEY_LEFT_SHIFT) && LibRay.key_up?(LibRay::KEY_RIGHT_SHIFT)
       elsif LibRay.key_down?(LibRay::KEY_LEFT_SHIFT) || LibRay.key_down?(LibRay::KEY_RIGHT_SHIFT)
-        @hold_timer += delta_t
+        @hold_timer.increase(delta_t)
         @animation.update(delta_t) unless @animation.frame + 1 >= @animation.frames
       else
         restart_attack
@@ -175,7 +175,7 @@ module Dungeon
 
     def restart_attack
       @attacking = false
-      @hold_timer = 0
+      @hold_timer.reset
       @animation.restart
     end
 

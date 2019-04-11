@@ -1,5 +1,7 @@
 module Dungeon
   class TypedMessage < Message
+    @text_index : Int32
+
     SLOWEST =   0.2
     SLOW    =   0.1
     MEDIUM  =  0.05
@@ -12,15 +14,10 @@ module Dungeon
       @timer = Timer.new(@type_speed)
       @text_index = 0
       @done = false
-      @text_line_index = 0
     end
 
     def initialize(text : String, type_speed = MEDIUM)
       initialize([text], type_speed)
-    end
-
-    def text
-      @text[@text_line_index]
     end
 
     def text_to_type
@@ -37,11 +34,16 @@ module Dungeon
       if @text_line_index >= @text.size - 1
         close
       else
-        @text_index = 0
-        @done = false
-        @timer.restart
-        @text_line_index += 1
+        next_line
       end
+    end
+
+    def next_line
+      super
+
+      @done = false
+      @text_index = 0
+      @timer.restart
     end
 
     def done?

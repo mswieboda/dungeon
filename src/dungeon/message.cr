@@ -27,12 +27,21 @@ module Dungeon
       @font_size = TEXT_SIZE
       @spacing = SPACING
       @color = LibRay::WHITE
-      @measured = LibRay.measure_text_ex(
-        sprite_font: @sprite_font,
-        text: @text.join("\n"),
-        font_size: @font_size,
-        spacing: @spacing
-      )
+
+      # get max measured
+      @measured = LibRay::Vector2.new(x: 0, y: 0)
+
+      @text.each do |line|
+        measured = LibRay.measure_text_ex(
+          sprite_font: @sprite_font,
+          text: @text.join("\n"),
+          font_size: @font_size,
+          spacing: @spacing
+        )
+
+        @measured.x = [@measured.x, measured.x].max
+        @measured.y = [@measured.y, measured.y].max
+      end
 
       @height = @measured.y
 
@@ -46,10 +55,15 @@ module Dungeon
       @icon_blink_timer = Timer.new(ICON_BLINK_TIMER)
       @open = false
       @active = false
+      @text_line_index = 0
     end
 
     def initialize(text : String)
       initialize([text])
+    end
+
+    def text
+      @text[@text_line_index]
     end
 
     def open
@@ -64,7 +78,15 @@ module Dungeon
     def dismiss
       return unless done?
 
-      close
+      if @text_line_index >= @text.size - 1
+        close
+      else
+        next_line
+      end
+    end
+
+    def next_line
+      @text_line_index += 1
     end
 
     def close
@@ -125,7 +147,7 @@ module Dungeon
       # text
       LibRay.draw_text_ex(
         sprite_font: @sprite_font,
-        text: @text.join("\n"),
+        text: text,
         position: @position,
         font_size: @font_size,
         spacing: @spacing,

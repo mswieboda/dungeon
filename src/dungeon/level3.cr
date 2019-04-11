@@ -14,7 +14,7 @@ module Dungeon
     end
 
     def start
-      message = TypedMessage.new("Level 3")
+      message = Message.new("Level 3")
       @game.show(message)
     end
   end

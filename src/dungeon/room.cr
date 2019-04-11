@@ -12,6 +12,7 @@ module Dungeon
       @drawables = [] of Entity
       @entities = [] of Entity
       @doors = [] of Door
+      @messages = [] of Message
       @camera = Camera.new(width: Game::SCREEN_WIDTH, height: Game::SCREEN_HEIGHT)
     end
 
@@ -22,6 +23,8 @@ module Dungeon
 
     def draw
       @drawables.each(&.draw)
+
+      @messages.each(&.draw)
     end
 
     def update

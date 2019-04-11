@@ -39,11 +39,7 @@ module Dungeon
 
       @hud = HeadsUpDisplay.new
 
-      @level = Level.new(
-        player: @player,
-        screenWidth: SCREEN_WIDTH,
-        screenHeight: SCREEN_HEIGHT
-      )
+      @level = Level.new(player: @player)
 
       # game over
       @game_over = false

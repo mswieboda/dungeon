@@ -3,6 +3,7 @@ module Dungeon
     getter? game_over
     getter? paused
 
+    @levels : Array(Level)
     @level : Level | Nil
     @message : Message
     @game_over_text_color : LibRay::Color
@@ -36,8 +37,7 @@ module Dungeon
         ]
       )
 
-      # player
-      @player = Player.new(loc: Location.new(150, 150))
+      @levels = [] of Level
 
       @message = Message.new("")
 
@@ -62,7 +62,16 @@ module Dungeon
         y: SCREEN_HEIGHT / 2 - @game_over_text_measured.y,
       )
 
-      @level = Level.new(game: self, player: @player)
+      level = Level.new(game: self)
+      @level = level
+
+      @levels << level
+
+      level = Level.new(game: self)
+      @levels << level
+
+      level = Level.new(game: self)
+      @levels << level
     end
 
     def run
@@ -87,7 +96,7 @@ module Dungeon
     end
 
     def check_game_over?
-      @player.dead? || level.complete?
+      level.player.dead? || level.complete?
     end
 
     def show(message : Message)
@@ -104,7 +113,11 @@ module Dungeon
 
       unpause if @message.closed?
 
-      @hud.update(@player)
+      @hud.update(level.player)
+
+      @level = @levels[0] if LibRay.key_pressed?(LibRay::KEY_ONE)
+      @level = @levels[1] if LibRay.key_pressed?(LibRay::KEY_TWO)
+      @level = @levels[2] if LibRay.key_pressed?(LibRay::KEY_THREE)
 
       if check_game_over?
         @game_over_timer.increase(LibRay.get_frame_time)

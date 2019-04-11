@@ -2,12 +2,15 @@ require "./location"
 
 module Dungeon
   class Level
+    getter player : Player
     getter? loaded
 
     @rooms : Hash(String, Room)
     @room : Room
 
-    def initialize(@game : Game, @player : Player)
+    def initialize(@game : Game)
+      @player = Player.new(loc: Location.new(150, 150))
+
       @rooms = Hash(String, Room).new
 
       rooms = [] of Room

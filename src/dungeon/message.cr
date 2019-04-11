@@ -7,6 +7,14 @@ module Dungeon
     BORDER  =  5
     PADDING = 30
 
+    TEXT_SIZE = 20
+    ICON_SIZE = 16
+    SPACING   =  3
+
+    ICON_BLINK_TIMER    =   1.0
+    ICON_BLINKS         = 1.125
+    ICON_BLINK_INTERVAL = ICON_BLINK_TIMER / ICON_BLINKS / 2
+
     BORDER_COLOR     = LibRay::Color.new(r: 85, g: 85, b: 85, a: 255)
     BACKGROUND_COLOR = LibRay::Color.new(r: 51, g: 51, b: 51, a: 255)
 
@@ -14,8 +22,8 @@ module Dungeon
 
     def initialize(@text : String)
       @sprite_font = LibRay.get_default_font
-      @font_size = 20
-      @spacing = 3
+      @font_size = TEXT_SIZE
+      @spacing = SPACING
       @color = LibRay::WHITE
       @measured = LibRay.measure_text_ex(
         sprite_font: @sprite_font,
@@ -32,9 +40,22 @@ module Dungeon
         x: MARGIN + BORDER + PADDING,
         y: Game::SCREEN_HEIGHT - MARGIN - BORDER - PADDING - @height
       )
+
+      @icon_blink_timer = Timer.new(ICON_BLINK_TIMER)
+    end
+
+    def update
+      delta_t = LibRay.get_frame_time
+
+      if @icon_blink_timer.done?
+        @icon_blink_timer.restart
+      else
+        @icon_blink_timer.increase(delta_t)
+      end
     end
 
     def draw
+      # border
       LibRay.draw_rectangle_v(
         position: LibRay::Vector2.new(
           x: MARGIN,
@@ -47,6 +68,7 @@ module Dungeon
         color: BORDER_COLOR
       )
 
+      # background
       LibRay.draw_rectangle_v(
         position: LibRay::Vector2.new(
           x: MARGIN + BORDER,
@@ -59,6 +81,7 @@ module Dungeon
         color: BACKGROUND_COLOR
       )
 
+      # text
       LibRay.draw_text_ex(
         sprite_font: @sprite_font,
         text: @text,
@@ -67,6 +90,28 @@ module Dungeon
         spacing: @spacing,
         color: @color
       )
+
+      draw_done_icon
+    end
+
+    def draw_done_icon
+      if (@icon_blink_timer.time / ICON_BLINK_INTERVAL).to_i % 2 == 1
+        LibRay.draw_triangle(
+          v1: LibRay::Vector2.new(
+            x: Game::SCREEN_WIDTH - MARGIN - BORDER - PADDING / 2 - ICON_SIZE,
+            y: Game::SCREEN_HEIGHT - MARGIN - BORDER - PADDING / 2 - ICON_SIZE
+          ),
+          v2: LibRay::Vector2.new(
+            x: Game::SCREEN_WIDTH - MARGIN - BORDER - PADDING / 2 - ICON_SIZE / 2,
+            y: Game::SCREEN_HEIGHT - MARGIN - BORDER - PADDING / 2
+          ),
+          v3: LibRay::Vector2.new(
+            x: Game::SCREEN_WIDTH - MARGIN - BORDER - PADDING / 2,
+            y: Game::SCREEN_HEIGHT - MARGIN - BORDER - PADDING / 2 - ICON_SIZE
+          ),
+          color: @color
+        )
+      end
     end
   end
 end

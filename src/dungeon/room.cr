@@ -33,10 +33,8 @@ module Dungeon
       @entities.each { |entity| entity.update(@entities.reject(entity)) unless entity.removed? }
       @entities.reject!(&.removed?)
 
-      @drawables.concat(@entities)
+      @drawables.concat(@entities.select(&.viewable?(@camera)))
       @drawables.concat(@player.drawables)
-
-      @drawables.select!(&.viewable?(@camera))
 
       # change order of drawing based on y coordinates
       @drawables.sort_by! { |d| d.y + d.height }
@@ -44,6 +42,8 @@ module Dungeon
       @camera.update(@player, width, height)
 
       @drawables.each(&.update_to_camera(@camera))
+
+      @messages.each(&.update)
 
       @doors.each(&.open) if completed?
     end

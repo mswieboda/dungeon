@@ -122,10 +122,7 @@ module Dungeon
 
       @message.update
 
-      # TODO: this messes up when game over pauses,
-      # since it unpauses every frame a message isn't open
-      # fix this
-      unpause if @message.closed?
+      unpause if @message.just_closed?
 
       @hud.update(level.player)
 

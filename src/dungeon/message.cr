@@ -45,10 +45,12 @@ module Dungeon
 
       @icon_blink_timer = Timer.new(ICON_BLINK_TIMER)
       @open = false
+      @active = false
     end
 
     def open
       @open = true
+      @active = true
     end
 
     def done?
@@ -69,6 +71,10 @@ module Dungeon
       !@open
     end
 
+    def just_closed?
+      @active && closed?
+    end
+
     def update
       delta_t = LibRay.get_frame_time
 
@@ -77,6 +83,8 @@ module Dungeon
       else
         @icon_blink_timer.increase(delta_t)
       end
+
+      @active = false if just_closed?
 
       dismiss if LibRay.key_pressed?(LibRay::KEY_ENTER) || LibRay.key_pressed?(LibRay::KEY_SPACE)
     end

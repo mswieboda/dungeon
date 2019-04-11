@@ -7,6 +7,7 @@ module Dungeon
     property origin : Location
     getter hit_box : Box
     getter? centered
+    getter? bottom_layer
 
     @tint : LibRay::Color
 
@@ -21,6 +22,7 @@ module Dungeon
       )
       @screen_x = @screen_y = 0_f32
       @centered = true
+      @bottom_layer = false
     end
 
     def initialize(loc, width, height, collision_box : Box, tint = TINT_DEFAULT)
@@ -115,6 +117,9 @@ module Dungeon
     end
 
     def update(_entities)
+    end
+
+    def bump_damage
     end
 
     # used for checking for movement collisions

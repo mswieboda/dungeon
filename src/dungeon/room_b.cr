@@ -81,6 +81,9 @@ module Dungeon
       # enemies
       @entities << BasicEnemy.new(loc: Location.new(100, 100))
 
+      # floors
+      @entities << SpikyFloor.new(loc: Location.new(300, 300), width: 64, height: 64)
+
       super
     end
   end

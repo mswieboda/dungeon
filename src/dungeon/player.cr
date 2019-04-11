@@ -161,7 +161,8 @@ module Dungeon
       delta = delta_t * PLAYER_MOVEMENT
 
       collidables = entities.select(&.collidable?)
-      enemies = entities.select(&.is_a?(Enemy)).map(&.as(Enemy))
+      bumpables = entities.select(&.responds_to?(:bump_damage))
+
       items = entities.select(&.is_a?(Item)).map(&.as(Item))
 
       if LibRay.key_down?(LibRay::KEY_W)
@@ -172,7 +173,7 @@ module Dungeon
 
         @loc.y -= delta
 
-        enemy_bump_detections(enemies)
+        bump_detections(bumpables)
 
         @loc.y += delta if collisions?(collidables)
       end
@@ -185,7 +186,7 @@ module Dungeon
 
         @loc.x -= delta
 
-        enemy_bump_detections(enemies)
+        bump_detections(bumpables)
 
         @loc.x += delta if collisions?(collidables)
       end
@@ -198,7 +199,7 @@ module Dungeon
 
         @loc.y += delta
 
-        enemy_bump_detections(enemies)
+        bump_detections(bumpables)
 
         @loc.y -= delta if collisions?(collidables)
       end
@@ -211,7 +212,7 @@ module Dungeon
 
         @loc.x += delta
 
-        enemy_bump_detections(enemies)
+        bump_detections(bumpables)
 
         @loc.x -= delta if collisions?(collidables)
       end
@@ -223,15 +224,18 @@ module Dungeon
       end
     end
 
-    def enemy_bump_detections(enemies : Array(Enemy))
+    def bump_detections(entities : Array(Entity))
       return if invincible?
 
-      enemies.each do |enemy|
-        enemy_bump(enemy.bump_damage) if !enemy.invincible? && collision?(enemy)
+      entities.each do |entity|
+        if collision?(entity)
+          bump_damage = entity.bump_damage
+          bump(bump_damage) if bump_damage
+        end
       end
     end
 
-    def enemy_bump(damage)
+    def bump(damage)
       hit(damage)
     end
 

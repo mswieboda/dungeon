@@ -41,6 +41,8 @@ module Dungeon
     end
 
     def bump_damage
+      return if invincible?
+
       BUMP_DAMAGE
     end
 

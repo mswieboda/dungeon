@@ -68,7 +68,8 @@ module Dungeon
 
     def player_bump_detection(player : Player)
       if !invincible? && collision?(player)
-        player.enemy_bump(bump_damage)
+        damage = bump_damage
+        player.bump(damage) if damage
       end
     end
 

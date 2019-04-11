@@ -38,7 +38,7 @@ module Dungeon
       @drawables.concat(@player.drawables)
 
       # change order of drawing based on y coordinates
-      @drawables.sort_by! { |d| d.y + d.height }
+      sort_drawables
 
       @camera.update(@player, width, height)
 
@@ -51,6 +51,12 @@ module Dungeon
       start
 
       @loaded = true
+    end
+
+    def sort_drawables
+      drawables = @drawables.select(&.bottom_layer?)
+      drawables.concat(@drawables.reject(&.bottom_layer?).sort_by! { |d| d.y + d.height })
+      @drawables = drawables
     end
 
     def change_room

@@ -1,6 +1,6 @@
 module Dungeon
   class Timer
-    getter time
+    getter time : Float32
     getter? active
 
     def initialize(@length : Float64 | Float32 | Int32)

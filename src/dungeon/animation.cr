@@ -4,6 +4,7 @@ module Dungeon
     property row : Int32
     property rotation : Float32
     property fps : Int32
+    property? loop_infinitely : Bool
 
     getter sprite : Sprite
     getter frames : Int32
@@ -12,12 +13,13 @@ module Dungeon
 
     TINT_DEFAULT = LibRay::WHITE
 
-    def initialize(@sprite : Sprite, @row = 0, @frame_initial = 0, @fps = 24, @tint = TINT_DEFAULT)
+    def initialize(@sprite : Sprite, @row = 0, @frame_initial = 0, @fps = 24, @tint = TINT_DEFAULT, @loop_infinitely = true)
       @frames = @sprite.frames
       @width = @sprite.width
       @height = @sprite.height
       @frame_t = 0_f32 + @frame_initial
       @rotation = 0_f32
+      @done = false
     end
 
     def frame
@@ -56,12 +58,22 @@ module Dungeon
       return if @fps <= 0
 
       @frame_t += delta_t * @fps
+      @done = false
 
-      @frame_t = 0_f32 if @frame_t >= @frames
+      if @frame_t >= @frames
+        @done = true
+
+        restart if loop_infinitely?
+      end
     end
 
     def restart
       @frame_t = 0_f32
+    end
+
+    def done?
+      return true if @fps == 0
+      @done
     end
   end
 end

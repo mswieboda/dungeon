@@ -3,7 +3,7 @@ require "./weapon"
 module Dungeon
   class Sword < Weapon
     property direction : Direction
-    ATTACK_TIME = 16
+    ATTACK_FPS = 16
 
     DAMAGE = 5
 
@@ -19,9 +19,8 @@ module Dungeon
       super(loc, direction, sprite, collision_box: collision_box)
 
       @animation.tint = @tint
-      @animation.fps = ATTACK_TIME
-
-      @attack_time = 0
+      @animation.fps = ATTACK_FPS
+      @animation.loop_infinitely = false
     end
 
     def draw
@@ -33,7 +32,6 @@ module Dungeon
     end
 
     def attack
-      @attack_time = 0
       @animation.restart
       @attacking = true
     end
@@ -67,14 +65,11 @@ module Dungeon
     def update(entities)
       return unless attacking?
 
-      # timer
-      @attack_time += 1
+      @animation.update(LibRay.get_frame_time)
 
-      if @attack_time >= ATTACK_TIME
+      if @animation.done?
         @attacking = false
       end
-
-      @animation.update(LibRay.get_frame_time)
 
       attack(entities.select(&.is_a?(LivingEntity)).map(&.as(LivingEntity)))
     end

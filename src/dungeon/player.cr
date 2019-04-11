@@ -14,8 +14,9 @@ module Dungeon
 
     PLAYER_MOVEMENT = 200
 
-    INVINCIBLE_TIME           = 32
-    INVINCIBLE_FLASH_INTERVAL =  8
+    INVINCIBLE_TIME           = 0.5
+    INVINCIBLE_FLASHES        =   2
+    INVINCIBLE_FLASH_INTERVAL = INVINCIBLE_TIME / INVINCIBLE_FLASHES / 2
     INVINCIBLE_TINT           = FADED
 
     MAX_HIT_POINTS = 30
@@ -47,7 +48,7 @@ module Dungeon
       @animation.tint = @tint
       @animation.row = @direction.value
 
-      @invincible_timer = 0
+      @invincible_timer = Timer.new(INVINCIBLE_TIME)
 
       @sword = Sword.new(
         loc: Location.new(x + origin.x, y + origin.y),
@@ -105,8 +106,10 @@ module Dungeon
       # living entity
       super
 
+      delta_t = LibRay.get_frame_time
+
       # flashes
-      invincible_flash
+      invincible_flash(delta_t)
 
       # movement
       move(entities)
@@ -162,8 +165,11 @@ module Dungeon
       items = entities.select(&.is_a?(Item)).map(&.as(Item))
 
       if LibRay.key_down?(LibRay::KEY_W)
-        @direction = Direction::Up
-        @animation.row = @direction.value
+        unless @sword.attacking?
+          @direction = Direction::Up
+          @animation.row = @direction.value
+        end
+
         @loc.y -= delta
 
         enemy_bump_detections(enemies)
@@ -172,8 +178,11 @@ module Dungeon
       end
 
       if LibRay.key_down?(LibRay::KEY_A)
-        @direction = Direction::Left
-        @animation.row = @direction.value
+        unless @sword.attacking?
+          @direction = Direction::Left
+          @animation.row = @direction.value
+        end
+
         @loc.x -= delta
 
         enemy_bump_detections(enemies)
@@ -182,8 +191,11 @@ module Dungeon
       end
 
       if LibRay.key_down?(LibRay::KEY_S)
-        @direction = Direction::Down
-        @animation.row = @direction.value
+        unless @sword.attacking?
+          @direction = Direction::Down
+          @animation.row = @direction.value
+        end
+
         @loc.y += delta
 
         enemy_bump_detections(enemies)
@@ -192,8 +204,11 @@ module Dungeon
       end
 
       if LibRay.key_down?(LibRay::KEY_D)
-        @direction = Direction::Right
-        @animation.row = @direction.value
+        unless @sword.attacking?
+          @direction = Direction::Right
+          @animation.row = @direction.value
+        end
+
         @loc.x += delta
 
         enemy_bump_detections(enemies)
@@ -238,22 +253,24 @@ module Dungeon
     end
 
     def after_hit_flash
-      @invincible_timer = 1
+      super
+
+      @invincible_timer.start unless @death_timer.active? || dead?
     end
 
-    def invincible_flash
-      if @invincible_timer >= INVINCIBLE_TIME
-        @invincible_timer = 0
+    def invincible_flash(delta_t)
+      if @invincible_timer.done?
+        @invincible_timer.reset
         tint!(TINT_DEFAULT)
-      elsif @invincible_timer > 0
-        tint = (@invincible_timer / INVINCIBLE_FLASH_INTERVAL).to_i % 2 == 1 ? TINT_DEFAULT : INVINCIBLE_TINT
+      elsif @invincible_timer.active?
+        tint = (@invincible_timer.time / INVINCIBLE_FLASH_INTERVAL).to_i % 2 == 1 ? TINT_DEFAULT : INVINCIBLE_TINT
         tint!(tint)
-        @invincible_timer += 1
+        @invincible_timer.increase(delta_t)
       end
     end
 
     def invincible?
-      super || @invincible_timer > 0
+      super || @invincible_timer.active?
     end
 
     def collidable?

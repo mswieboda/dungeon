@@ -6,8 +6,9 @@ module Dungeon
     getter tint_default : LibRay::Color
     getter? dead
 
-    HIT_FLASH_TIME     = 32
-    HIT_FLASH_INTERVAL =  8
+    HIT_FLASH_TIME     = 0.5
+    HIT_FLASHES        =   2
+    HIT_FLASH_INTERVAL = HIT_FLASH_TIME / HIT_FLASHES / 2
     HIT_FLASH_TINT     = LibRay::RED
 
     DEATH_TIME = 1
@@ -18,7 +19,7 @@ module Dungeon
     def initialize(loc : Location, width, height, collision_box : Box, @hit_box : Box, @tint_default = TINT_DEFAULT)
       super(loc, width, height, collision_box, hit_box, tint_default)
 
-      @hit_flash_timer = 0
+      @hit_flash_timer = Timer.new(HIT_FLASH_TIME)
 
       @hit_points = max_hit_points
       @death_timer = Timer.new(DEATH_TIME)
@@ -70,27 +71,30 @@ module Dungeon
     end
 
     def update(_entities)
-      hit_flash
-      death_fade
+      delta_t = LibRay.get_frame_time
+
+      hit_flash(delta_t)
+      death_fade(delta_t)
     end
 
-    def hit_flash
-      if @hit_flash_timer >= HIT_FLASH_TIME
-        @hit_flash_timer = 0
+    def hit_flash(delta_t)
+      if @hit_flash_timer.done?
+        @hit_flash_timer.reset
         tint!(tint_default)
 
         after_hit_flash
-      elsif @hit_flash_timer > 0
-        tint = (@hit_flash_timer / HIT_FLASH_INTERVAL).to_i % 2 == 1 ? tint_default : HIT_FLASH_TINT
+      elsif @hit_flash_timer.active?
+        tint = (@hit_flash_timer.time / HIT_FLASH_INTERVAL).to_i % 2 == 1 ? tint_default : HIT_FLASH_TINT
         tint!(tint)
-        @hit_flash_timer += 1
+        @hit_flash_timer.increase(delta_t)
       end
     end
 
     def after_hit_flash
+      die if @hit_points <= 0
     end
 
-    def death_fade
+    def death_fade(delta_t)
       if @death_timer.done?
         @death_timer.reset
         @dead = true
@@ -98,17 +102,15 @@ module Dungeon
         tint = tint_default
         tint.a = 255 - 255 * @death_timer.percentage
         tint!(tint)
-        @death_timer.increase(LibRay.get_frame_time)
+        @death_timer.increase(delta_t)
       end
     end
 
     def hit(damage = 0)
       return if invincible?
 
-      @hit_flash_timer = 1
       @hit_points -= damage
-
-      die if @hit_points <= 0
+      @hit_flash_timer.start
     end
 
     def die
@@ -117,7 +119,7 @@ module Dungeon
     end
 
     def invincible?
-      @hit_flash_timer > 0 || @death_timer.active? || dead?
+      @hit_flash_timer.active? || @death_timer.active? || dead?
     end
 
     def heal(hit_points)

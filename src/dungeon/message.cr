@@ -78,10 +78,7 @@ module Dungeon
         @icon_blink_timer.increase(delta_t)
       end
 
-      key = LibRay.get_key_pressed
-      if key != -1
-        dismiss
-      end
+      dismiss if LibRay.key_pressed?(LibRay::KEY_ENTER) || LibRay.key_pressed?(LibRay::KEY_SPACE)
     end
 
     def draw

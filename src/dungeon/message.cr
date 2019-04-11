@@ -1,5 +1,7 @@
 module Dungeon
   class Message
+    getter? open
+    getter? closed
     @height : Float32
     @color : LibRay::Color
 
@@ -42,6 +44,15 @@ module Dungeon
       )
 
       @icon_blink_timer = Timer.new(ICON_BLINK_TIMER)
+      @open = false
+    end
+
+    def open
+      @open = true
+    end
+
+    def close
+      @open = false
     end
 
     def update
@@ -52,9 +63,16 @@ module Dungeon
       else
         @icon_blink_timer.increase(delta_t)
       end
+
+      key = LibRay.get_key_pressed
+      if key != -1
+        close
+      end
     end
 
     def draw
+      return unless open?
+
       # border
       LibRay.draw_rectangle_v(
         position: LibRay::Vector2.new(

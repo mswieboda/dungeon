@@ -83,7 +83,9 @@ module Dungeon
       @entities << BasicEnemy.new(loc: Location.new(100, 100))
 
       # message
-      @messages << Message.new("Welcome to Dungeon.\nIf this is your first time in Dungeon, you have to fight...")
+      message = Message.new("Welcome to Dungeon.\nIf this is your first time in Dungeon, you have to fight...")
+      message.open
+      @messages << message
 
       super
     end

@@ -2,11 +2,11 @@ require "./location"
 
 module Dungeon
   class RoomC < Room
-    def initialize(player)
+    def initialize(game, player)
       width = Game::SCREEN_WIDTH * 3
       height = Game::SCREEN_HEIGHT * 3
 
-      super(player, width, height)
+      super(game, player, width, height)
     end
 
     def load_initial

@@ -8,11 +8,10 @@ module Dungeon
 
     @player : Player
 
-    def initialize(@player, @width = Game::SCREEN_WIDTH, @height = Game::SCREEN_HEIGHT)
+    def initialize(@game : Game, @player, @width = Game::SCREEN_WIDTH, @height = Game::SCREEN_HEIGHT)
       @drawables = [] of Entity
       @entities = [] of Entity
       @doors = [] of Door
-      @messages = [] of Message
       @camera = Camera.new(width: Game::SCREEN_WIDTH, height: Game::SCREEN_HEIGHT)
     end
 
@@ -23,8 +22,6 @@ module Dungeon
 
     def draw
       @drawables.each(&.draw)
-
-      @messages.each(&.draw)
     end
 
     def update
@@ -42,8 +39,6 @@ module Dungeon
       @camera.update(@player, width, height)
 
       @drawables.each(&.update_to_camera(@camera))
-
-      @messages.each(&.update)
 
       @doors.each(&.open) if completed?
     end

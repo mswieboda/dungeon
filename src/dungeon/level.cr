@@ -5,13 +5,13 @@ module Dungeon
   @room : Room
 
   class Level
-    def initialize(@player : Player)
+    def initialize(@game : Game, @player : Player)
       @rooms = Hash(String, Room).new
 
       rooms = [] of Room
 
       [RoomA, RoomC, RoomB].each do |room_class|
-        rooms << room_class.new(@player).as(Room)
+        rooms << room_class.new(@game, @player).as(Room)
       end
 
       @room = rooms.last.as(Room)

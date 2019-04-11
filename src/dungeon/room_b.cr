@@ -2,11 +2,11 @@ require "./location"
 
 module Dungeon
   class RoomB < Room
-    def initialize(player)
+    def initialize(game, player)
       width = Game::SCREEN_WIDTH
       height = Game::SCREEN_HEIGHT
 
-      super(player, width, height)
+      super(game, player, width, height)
     end
 
     def load_initial
@@ -84,8 +84,8 @@ module Dungeon
 
       # message
       message = TypedMessage.new("Welcome to Dungeon.\nIf this is your first time in Dungeon, you have to fight...")
-      message.open
-      @messages << message
+
+      @game.show_message(message)
 
       super
     end

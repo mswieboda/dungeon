@@ -2,7 +2,8 @@ module Dungeon
   class Game
     getter? game_over
 
-    @level : Level
+    @level : Level | Nil
+    @message : Message
     @game_over_text_color : LibRay::Color
 
     SCREEN_WIDTH  = 1024
@@ -37,9 +38,9 @@ module Dungeon
       # player
       @player = Player.new(loc: Location.new(150, 150))
 
-      @hud = HeadsUpDisplay.new
+      @message = Message.new("")
 
-      @level = Level.new(player: @player)
+      @hud = HeadsUpDisplay.new
 
       # game over
       @game_over = false
@@ -59,6 +60,8 @@ module Dungeon
         x: SCREEN_WIDTH / 2 - @game_over_text_measured.x / 2,
         y: SCREEN_HEIGHT / 2 - @game_over_text_measured.y,
       )
+
+      @level = Level.new(game: self, player: @player)
     end
 
     def run
@@ -70,12 +73,26 @@ module Dungeon
       close
     end
 
+    def level
+      @level.as(Level)
+    end
+
     def check_game_over?
-      @player.dead? || @level.complete?
+      @player.dead? || level.complete?
+    end
+
+    def show_message(message : Message)
+      # pause
+      message.open
+
+      @message = message
     end
 
     def update
-      @level.update
+      level.update
+
+      @message.update
+
       @hud.update(@player)
 
       if check_game_over?
@@ -89,7 +106,9 @@ module Dungeon
     end
 
     def draw
-      @level.draw
+      level.draw
+
+      @message.draw
 
       @hud.draw
 

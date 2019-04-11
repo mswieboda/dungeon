@@ -3,8 +3,7 @@ require "./dungeon/*"
 
 module Dungeon
   def self.run
-    game = Game.new
-    game.run
+    Game.new.run
   end
 end
 

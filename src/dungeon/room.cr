@@ -16,7 +16,7 @@ module Dungeon
       @loaded = false
     end
 
-    def load_initial
+    def load
       # initialize room entities, etc
     end
 
@@ -53,7 +53,7 @@ module Dungeon
       @loaded = true
     end
 
-    def room_change
+    def change_room
       @doors.each do |door|
         return door.pass_through if door.passed_through?
       end

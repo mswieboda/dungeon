@@ -9,32 +9,21 @@ module Dungeon
     @room : Room
 
     def initialize(@game : Game)
-      @player = Player.new(loc: Location.new(150, 150))
+      @player = Player.new
 
       @rooms = Hash(String, Room).new
-
-      rooms = [] of Room
-
-      [RoomA, RoomC, RoomB].each do |room_class|
-        rooms << room_class.new(@game, @player).as(Room)
-      end
-
-      @room = rooms.last.as(Room)
-
-      rooms.each do |room|
-        @rooms[room.class.name] = room
-      end
-
-      rooms.clear
-
-      @room.load_initial
+      @room = Room.new(@game, @player)
+      @room.load
 
       @loaded = false
     end
 
+    def load
+      # initialize rooms, player location, etc
+    end
+
     def start
-      message = TypedMessage.new("Welcome to Dungeon.\nIf this is your first time in Dungeon, you have to fight...")
-      @game.show(message)
+      # ran once the level is loaded, and first update and draw ran
     end
 
     def draw
@@ -44,8 +33,8 @@ module Dungeon
     def update
       @room.update
 
-      room_change = @room.room_change
-      room_change(**room_change) if room_change
+      change_room = @room.change_room
+      change_room(**change_room) if change_room
 
       return if loaded?
 
@@ -54,9 +43,9 @@ module Dungeon
       @loaded = true
     end
 
-    def room_change(next_room_name : String, next_door_name : String)
+    def change_room(next_room_name : String, next_door_name : String)
       room = @rooms[next_room_name]
-      room.load_initial unless room.loaded?
+      room.load unless room.loaded?
 
       door = room.get_door(next_door_name) if room
 
@@ -66,7 +55,7 @@ module Dungeon
 
         @room = room
       else
-        puts "#{self.class.name}#room_change room: #{next_room_name} door: #{next_door_name} not found!"
+        puts "#{self.class.name}#change_room room: #{next_room_name} door: #{next_door_name} not found!"
       end
     end
 

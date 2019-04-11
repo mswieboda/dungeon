@@ -26,4 +26,12 @@ class Location
   def to_s(io : IO)
     io << "(x: #{x}, y: #{y})"
   end
+
+  def x=(x : Int32)
+    @x = x.to_f32
+  end
+
+  def y=(y : Int32)
+    @y = y.to_f32
+  end
 end

@@ -9,8 +9,7 @@ module Dungeon
       super(game, player, width, height)
     end
 
-    def load_initial
-      # player
+    def load
       @entities << @player
 
       # TODO: move player to start location, change direction, etc

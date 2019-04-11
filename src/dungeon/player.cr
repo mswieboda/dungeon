@@ -21,7 +21,7 @@ module Dungeon
 
     MAX_HIT_POINTS = 30
 
-    def initialize(loc : Location)
+    def initialize
       @direction = Direction::Up
 
       sprite = Sprite.get("player")
@@ -43,7 +43,7 @@ module Dungeon
         height: height
       )
 
-      super(loc, width, height, collision_box, hit_box)
+      super(Location.new, width, height, collision_box, hit_box)
 
       @animation.tint = @tint
       @animation.row = @direction.value

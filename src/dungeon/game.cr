@@ -3,8 +3,9 @@ module Dungeon
     getter? game_over
     getter? paused
 
-    @levels : Array(Level)
+    @levels : Hash(String, Level)
     @level : Level | Nil
+
     @message : Message
     @game_over_text_color : LibRay::Color
 
@@ -37,8 +38,6 @@ module Dungeon
         ]
       )
 
-      @levels = [] of Level
-
       @message = Message.new("")
 
       @hud = HeadsUpDisplay.new
@@ -62,16 +61,17 @@ module Dungeon
         y: SCREEN_HEIGHT / 2 - @game_over_text_measured.y,
       )
 
-      level = Level.new(game: self)
+      # levels
+      @levels = Hash(String, Level).new
+
+      [Level1, Level2, Level3].each do |level_class|
+        @levels[level_class.name] = level_class.new(game: self).as(Level)
+      end
+
+      # first level
+      level = @levels[Level1.name].as(Level)
+      level.load
       @level = level
-
-      @levels << level
-
-      level = Level.new(game: self)
-      @levels << level
-
-      level = Level.new(game: self)
-      @levels << level
     end
 
     def run
@@ -106,18 +106,34 @@ module Dungeon
       @message = message
     end
 
+    def change_level(level_name : String)
+      level = @levels[level_name]
+      level.load unless level.loaded?
+
+      if level
+        @level = level
+      else
+        puts "#{self.class.name}#change_level level: #{level_name} not found!"
+      end
+    end
+
     def update
       level.update unless paused?
 
       @message.update
 
+      # TODO: this messes up when game over pauses,
+      # since it unpauses every frame a message isn't open
+      # fix this
       unpause if @message.closed?
 
       @hud.update(level.player)
 
-      @level = @levels[0] if LibRay.key_pressed?(LibRay::KEY_ONE)
-      @level = @levels[1] if LibRay.key_pressed?(LibRay::KEY_TWO)
-      @level = @levels[2] if LibRay.key_pressed?(LibRay::KEY_THREE)
+      unless paused?
+        change_level(Level1.name) if LibRay.key_pressed?(LibRay::KEY_ONE)
+        change_level(Level2.name) if LibRay.key_pressed?(LibRay::KEY_TWO)
+        change_level(Level3.name) if LibRay.key_pressed?(LibRay::KEY_THREE)
+      end
 
       if check_game_over?
         @game_over_timer.increase(LibRay.get_frame_time)
@@ -125,6 +141,7 @@ module Dungeon
         if @game_over_timer.done?
           @game_over_timer.reset
           @game_over = true
+          pause
         end
       end
     end

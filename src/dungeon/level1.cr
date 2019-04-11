@@ -14,7 +14,7 @@ module Dungeon
     end
 
     def start
-      message = TypedMessage.new("Welcome to Dungeon.\nIf this is your first time in Dungeon, you have to fight...")
+      message = TypedMessage.new(["Welcome to Dungeon.", "If this is your first time in Dungeon, you have to fight..."])
       @game.show(message)
     end
   end

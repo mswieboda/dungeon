@@ -6,19 +6,41 @@ module Dungeon
     FAST    = 0.025
     FASTEST = 0.001
 
-    def initialize(text : String, @type_speed = MEDIUM)
+    def initialize(text : Array(String), @type_speed = MEDIUM)
       super(text)
 
       @timer = Timer.new(@type_speed)
       @text_index = 0
       @done = false
+      @text_line_index = 0
+    end
+
+    def initialize(text : String, type_speed = MEDIUM)
+      initialize([text], type_speed)
+    end
+
+    def text
+      @text[@text_line_index]
     end
 
     def text_to_type
       if @text_index > 0
-        @text[0..@text_index - 1]
+        text[0..@text_index - 1]
       else
         ""
+      end
+    end
+
+    def dismiss
+      return unless done?
+
+      if @text_line_index >= @text.size - 1
+        close
+      else
+        @text_index = 0
+        @done = false
+        @timer.restart
+        @text_line_index += 1
       end
     end
 
@@ -32,7 +54,7 @@ module Dungeon
       if !@done && @timer.done?
         @timer.restart
 
-        if @text_index >= @text.size
+        if @text_index >= text.size
           @done = true
         else
           @text_index += @type_speed == FASTEST ? 6 : 3

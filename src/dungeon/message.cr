@@ -22,21 +22,21 @@ module Dungeon
 
     MAX_TEXT_WIDTH = Game::SCREEN_WIDTH - MARGIN * 2 - BORDER * 2 - PADDING * 2
 
-    def initialize(@text : String)
+    def initialize(@text : Array(String))
       @sprite_font = LibRay.get_default_font
       @font_size = TEXT_SIZE
       @spacing = SPACING
       @color = LibRay::WHITE
       @measured = LibRay.measure_text_ex(
         sprite_font: @sprite_font,
-        text: @text,
+        text: @text.join("\n"),
         font_size: @font_size,
         spacing: @spacing
       )
 
       @height = @measured.y
 
-      puts "#{self.class.name} line in message is too long, message:\n<\n#{@text}\n>" if @measured.x > MAX_TEXT_WIDTH
+      puts "#{self.class.name} line in message is too long, message:\n<\n#{@text.join("\n")}\n>" if @measured.x > MAX_TEXT_WIDTH
 
       @position = LibRay::Vector2.new(
         x: MARGIN + BORDER + PADDING,
@@ -46,6 +46,10 @@ module Dungeon
       @icon_blink_timer = Timer.new(ICON_BLINK_TIMER)
       @open = false
       @active = false
+    end
+
+    def initialize(text : String)
+      initialize([text])
     end
 
     def open
@@ -121,7 +125,7 @@ module Dungeon
       # text
       LibRay.draw_text_ex(
         sprite_font: @sprite_font,
-        text: @text,
+        text: @text.join("\n"),
         position: @position,
         font_size: @font_size,
         spacing: @spacing,

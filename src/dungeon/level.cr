@@ -1,10 +1,12 @@
 require "./location"
 
 module Dungeon
-  @rooms : Hash(String, Room)
-  @room : Room
-
   class Level
+    getter? loaded
+
+    @rooms : Hash(String, Room)
+    @room : Room
+
     def initialize(@game : Game, @player : Player)
       @rooms = Hash(String, Room).new
 
@@ -23,6 +25,13 @@ module Dungeon
       rooms.clear
 
       @room.load_initial
+
+      @loaded = false
+    end
+
+    def start
+      message = TypedMessage.new("Welcome to Dungeon.\nIf this is your first time in Dungeon, you have to fight...")
+      @game.show(message)
     end
 
     def draw
@@ -34,6 +43,12 @@ module Dungeon
 
       room_change = @room.room_change
       room_change(**room_change) if room_change
+
+      return if loaded?
+
+      start
+
+      @loaded = true
     end
 
     def room_change(next_room_name : String, next_door_name : String)

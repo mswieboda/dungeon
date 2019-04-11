@@ -13,11 +13,15 @@ module Dungeon
       @entities = [] of Entity
       @doors = [] of Door
       @camera = Camera.new(width: Game::SCREEN_WIDTH, height: Game::SCREEN_HEIGHT)
+      @loaded = false
     end
 
     def load_initial
       # initialize room entities, etc
-      @loaded = true
+    end
+
+    def start
+      # ran once the room is loaded, and first update and draw ran
     end
 
     def draw
@@ -41,6 +45,12 @@ module Dungeon
       @drawables.each(&.update_to_camera(@camera))
 
       @doors.each(&.open) if completed?
+
+      return if loaded?
+
+      start
+
+      @loaded = true
     end
 
     def room_change

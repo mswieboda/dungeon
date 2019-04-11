@@ -1,6 +1,7 @@
 module Dungeon
   class Game
     getter? game_over
+    getter? paused
 
     @level : Level | Nil
     @message : Message
@@ -77,21 +78,31 @@ module Dungeon
       @level.as(Level)
     end
 
+    def pause
+      @paused = true
+    end
+
+    def unpause
+      @paused = false
+    end
+
     def check_game_over?
       @player.dead? || level.complete?
     end
 
-    def show_message(message : Message)
-      # pause
+    def show(message : Message)
+      pause
       message.open
 
       @message = message
     end
 
     def update
-      level.update
+      level.update unless paused?
 
       @message.update
+
+      unpause if @message.closed?
 
       @hud.update(@player)
 

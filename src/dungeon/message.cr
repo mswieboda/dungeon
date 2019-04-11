@@ -1,7 +1,7 @@
 module Dungeon
   class Message
     getter? open
-    getter? closed
+
     @height : Float32
     @color : LibRay::Color
 
@@ -63,6 +63,10 @@ module Dungeon
 
     def close
       @open = false
+    end
+
+    def closed?
+      !@open
     end
 
     def update

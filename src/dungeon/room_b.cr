@@ -82,11 +82,6 @@ module Dungeon
       # enemies
       @entities << BasicEnemy.new(loc: Location.new(100, 100))
 
-      # message
-      message = TypedMessage.new("Welcome to Dungeon.\nIf this is your first time in Dungeon, you have to fight...")
-
-      @game.show_message(message)
-
       super
     end
   end
